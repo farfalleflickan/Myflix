@@ -1,9 +1,9 @@
-**Myflix**
+# Myflix
 > A Netflix clone!
 
 Myflix tries to be a somewhat simple and lightweight "DIY Netflix", similar to Plex or Emby, for your DIY NAS, especially aimed at the Raspberry Pi/Odroid/etc ecosystem.
 
-Shitty temporary tutorial:
+**Shitty temporary tutorial:**
 
 Requires a bash cgi implementation for your web server. Not that it uses at this stage... But it will, probably.
 
