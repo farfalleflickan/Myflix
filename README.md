@@ -21,7 +21,7 @@ Issues :
 * "Slow" file scanning, scanning 1200+ TV shows files while getting metadata (so, IDs and posters ) took around 2:30 minutes, no metadata = faster scanning! 
 * No comments... Whoops...
 * Pretty useless at the moment...
-* not really an issue imho, but it's html5 reliant, so all video files HAVE to be mp4's
+* not really an issue imho, but it's html5 reliant, so all video files HAVE to be mp4's, no transcoding is going to happen. If you want transcoding, use something fancier like Emby
 
 TO-DO:
 * Subtitle support (in VTT)
