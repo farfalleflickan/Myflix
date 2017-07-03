@@ -18,7 +18,7 @@ Features :
 * Lightweight and highly customisable, just open a script and edit it! 
 
 Issues :
-* "Slow" file scanning, scanning 200+ TV shows files while getting metadata (so, IDs and posters ) took around 2:30 minutes, no metadata = faster scanning! 
+* "Slow" file scanning, scanning 1200+ TV shows files while getting metadata (so, IDs and posters ) took around 2:30 minutes, no metadata = faster scanning! 
 * No comments... Whoops...
 * Pretty useless at the moment...
 * not really an issue imho, but it's html5 reliant, so all video files HAVE to be mp4's
