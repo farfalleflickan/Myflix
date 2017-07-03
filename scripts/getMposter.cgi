@@ -19,8 +19,8 @@ output=$(curl -s --request GET --url $myUrl --data '{}' | jq -r '.posters | map(
 if [[ $output == *".jpg"* ]]; then
 	output="https://image.tmdb.org/t/p/original"$output;
 else
-	output="null"
-	exit
+	echo "null"
+        exit
 fi
 
 if $dMoImg; then
