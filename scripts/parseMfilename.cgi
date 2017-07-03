@@ -21,7 +21,17 @@ if [[ "${filename}" =~ ${regexM} ]]; then
     if [ -s $dbNameMovie ]; then
 		if ! grep -q ${file} $dbNameMovie; then
 			myPoster="";
-            myID=$(./getMid.cgi "${movie}");
+			
+			if [[ $movie == *"Departures"* ]]; then
+            	myID="1069238";
+        	elif [[ $movie == *"Pilgrim"* ]]; then
+            	myID="0446029";
+			elif [[ $movie == *"Guide.to.the.Galaxy"*  ]]; then
+				myID="0371724";
+        	else
+            	myID=$(./getMid.cgi "${movie}");
+        	fi
+
             if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
                	myPoster=$(./getMposter.cgi "${myID}");
             else
@@ -33,7 +43,14 @@ if [[ "${filename}" =~ ${regexM} ]]; then
         fi
 	else
     	myPoster="";
-		myID=$(./getMid.cgi "${movie}");
+		if [[ $movie == *"Departures"* ]]; then
+			myID="1069238";
+		elif [[ $movie == *"Pilgrim"* ]]; then
+			myID="0446029";
+		else
+			myID=$(./getMid.cgi "${movie}");
+		fi
+
         if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
 			myPoster=$(./getMposter.cgi "${myID}");
         else

@@ -7,6 +7,7 @@ if [ "$#" -eq 0 ]; then
 fi
 
 dbNameTV="../dbTV.json"
+fetchTVmetadata=false
 regexTV1="(.*)[ .][sS]([0-9]{1})[eE]([0-9]{2})[ .](.*)"
 regexTV2="(.*)[ .][sS]([0-9]{2})[eE]([0-9]{2})[ .](.*)"
 regexTV3="(.*)[.]([0-9]{2})[x]([0-9]{2})[.](.*)"
@@ -25,39 +26,44 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
 	mySeason=${BASH_REMATCH[2]};
 	myEpisode=${BASH_REMATCH[3]};
 	if [ -s $dbNameTV ]; then
-		if [[ $(jq "map(select(.Show == \"${myShow}\"))" $dbNameTV) != "[]" ]]; then
+		if grep -q "\"Show\": \"${myShow}\"" $dbNameTV; then
 			if ! grep -q ${file} $dbNameTV; then
 				jq -r "map((select(.Show == \"${myShow}\") | .Episodes) |= . + [{\"Season\":\"${mySeason}\",\"Episode\":\"${myEpisode}\",\"File\":\"${file}\"}])" $dbNameTV | sponge $dbNameTV;
 			fi
 		else
 			myPoster="";
-			myID=$(./getTVid.cgi "${myShow}");
-			tempPath=$(dirname $1);
-			tempPath=${tempPath%/*};
-			numSeasons=$(find $tempPath -mindepth 1 -type d | wc -l);
-
-			if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
-				myPoster=$(./getTVposter.cgi "${myID}");
-			else
-				myID=""
-				myPoster=""
+			myID="";
+	        if $fetchTVmetadata; then
+				myID=$(./getTVid.cgi "${myShow}");
+				if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
+					myPoster=$(./getTVposter.cgi "${myID}");
+				else
+					myID=""
+					myPoster=""
+				fi
 			fi
-			jq -r ". |= . + [{\"Show\":\"${myShow}\",\"ID\":\"${myID}\",\"Poster\":\"${myPoster}\",\"Seasons\":\"${numSeasons}\",\"Episodes\":[{\"Season\":\"${mySeason}\",\"Episode\":\"${myEpisode}\",\"File\":\"${file}\"}]}]" $dbNameTV | sponge $dbNameTV;
+			tempPath=$(dirname $1);
+            tempPath=${tempPath%/*};
+            numSeasons=$(find $tempPath -mindepth 1 -type d | wc -l);
+			jq -r ". |= . + [{\"Show\": \"${myShow}\",\"ID\":\"${myID}\",\"Poster\":\"${myPoster}\",\"Seasons\":\"${numSeasons}\",\"Episodes\":[{\"Season\":\"${mySeason}\",\"Episode\":\"${myEpisode}\",\"File\":\"${file}\"}]}]" $dbNameTV | sponge $dbNameTV;
 		fi
 	else
 		myPoster="";
-		myID=$(./getTVid.cgi "${myShow}");
-		if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
-        	myPoster=$(./getTVposter.cgi "${myID}");
-        else
-            myID=""
-        	myPoster=""
-        fi
+		myID="";
+		if $fetchTVmetadata; then
+            myID=$(./getTVid.cgi "${myShow}");
+			if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
+        		myPoster=$(./getTVposter.cgi "${myID}");
+        	else
+            	myID=""
+        		myPoster=""
+        	fi
+		fi
 		tempPath=$(dirname $1);
         tempPath=${tempPath%/*};
         numSeasons=$(find $tempPath -mindepth 1 -type d | wc -l);
 
-		printf '[{"Show":"%s", "ID":"%s", "Poster":"%s", "Seasons":"%s", "Episodes":[{"Season":"%s","Episode":"%s","Filepath":"%s"}]}]\n' "${myShow}" "${myID}" "${myPoster}" "${numSeasons}" "${mySeason}" "${myEpisode}" "${file}" >> $dbNameTV;
+		printf '[\n{\n"Show": "%s",\n"ID":"%s",\n "Poster":"%s", "Seasons":"%s", "Episodes":[{"Season":"%s","Episode":"%s","Filepath":"%s"}]}]\n' "${myShow}" "${myID}" "${myPoster}" "${numSeasons}" "${mySeason}" "${myEpisode}" "${file}" >> $dbNameTV;
 	fi
 else
 	echo -n "Unparsable "
