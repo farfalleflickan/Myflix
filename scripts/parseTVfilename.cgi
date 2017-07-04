@@ -2,8 +2,8 @@
 
 cd "$(dirname "$0")"
 if [ "$#" -eq 0 ]; then
-    echo "$0": usage: parseTVfilename.cgi /path/to/file
-    exit 1
+	echo "$0": usage: parseTVfilename.cgi /path/to/file
+	exit 1
 fi
 
 dbNameTV="../dbTV.json"
@@ -15,7 +15,7 @@ regexTV4="(.*)[.]([0-9]{1})[x]([0-9]{2})[.](.*)"
 
 . config.cfg
 if [ ! -f $dbNameTV ]; then
-    touch $dbNameTV;
+	touch $dbNameTV;
 fi
 
 file=${1#../}
@@ -33,7 +33,7 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
 		else
 			myPoster="";
 			myID="";
-	        if $fetchTVmetadata; then
+			if $fetchTVmetadata; then
 				myID=$(./getTVid.cgi "${myShow}");
 				if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
 					myPoster=$(./getTVposter.cgi "${myID}");
@@ -43,27 +43,27 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
 				fi
 			fi
 			tempPath=$(dirname $1);
-            tempPath=${tempPath%/*};
-            numSeasons=$(find $tempPath -mindepth 1 -type d | wc -l);
+			tempPath=${tempPath%/*};
+			numSeasons=$(find $tempPath -mindepth 1 -type d | wc -l);
 			jq -r ". |= . + [{\"Show\": \"${myShow}\",\"ID\":\"${myID}\",\"Poster\":\"${myPoster}\",\"Seasons\":\"${numSeasons}\",\"Episodes\":[{\"Season\":\"${mySeason}\",\"Episode\":\"${myEpisode}\",\"File\":\"${file}\"}]}]" $dbNameTV | sponge $dbNameTV;
 		fi
 	else
 		myPoster="";
 		myID="";
 		if $fetchTVmetadata; then
-            myID=$(./getTVid.cgi "${myShow}");
+			myID=$(./getTVid.cgi "${myShow}");
 			if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
-        		myPoster=$(./getTVposter.cgi "${myID}");
-        	else
-            	myID=""
-        		myPoster=""
-        	fi
+				myPoster=$(./getTVposter.cgi "${myID}");
+			else
+				myID=""
+				myPoster=""
+			fi
 		fi
 		tempPath=$(dirname $1);
-        tempPath=${tempPath%/*};
-        numSeasons=$(find $tempPath -mindepth 1 -type d | wc -l);
+		tempPath=${tempPath%/*};
+		numSeasons=$(find $tempPath -mindepth 1 -type d | wc -l);
 
-		printf '[\n{\n"Show": "%s",\n"ID":"%s",\n "Poster":"%s", "Seasons":"%s", "Episodes":[{"Season":"%s","Episode":"%s","Filepath":"%s"}]}]\n' "${myShow}" "${myID}" "${myPoster}" "${numSeasons}" "${mySeason}" "${myEpisode}" "${file}" >> $dbNameTV;
+		printf '[\n{\n"Show": "%s",\n"ID":"%s",\n "Poster":"%s", "Seasons":"%s", "Episodes":[{"Season":"%s","Episode":"%s","File":"%s"}]}]\n' "${myShow}" "${myID}" "${myPoster}" "${numSeasons}" "${mySeason}" "${myEpisode}" "${file}" >> $dbNameTV;
 	fi
 else
 	echo -n "Unparsable "

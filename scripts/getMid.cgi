@@ -2,8 +2,8 @@
 
 cd "$(dirname "$0")"
 if [ "$#" -eq 0 ]; then
-    echo "$0": usage: getMid.cgi nameOfMovie
-    exit 1
+	echo "$0": usage: getMid.cgi nameOfMovie
+	exit 1
 fi
 
 movie=${1}

@@ -21,7 +21,7 @@ body {
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 5% auto; /* 15% from the top and centered */
     padding: 10px;
     border: 1px solid #888;
     width: 80%; /* Could be more or less, depending on screen size */
@@ -61,4 +61,23 @@ body {
         height:auto;
         width: 45vw;
     }
+}
+
+.video_player{
+    width: 70%;
+    margin-left: 15%;
+}
+
+.showEpUl{
+    display: none;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.epButton{
+    border: none;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }

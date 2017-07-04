@@ -23,6 +23,3 @@ window.onclick = function(event) {
         player = "";
     }
 };
-
-
-
