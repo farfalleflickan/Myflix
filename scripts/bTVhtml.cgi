@@ -26,21 +26,21 @@ tempNum=1
 htmlStr+="\n</select>\n<ul id=\"C${myID}_${tempNum}\" class=\"showEpUl\">"
 epNum=0
 realEpNum=1
-while [[ $epNum -lt $numEpisodes ]] && [[ $tempNum -le $numSeasons ]]; do
+while [[ $epNum -le $numEpisodes ]] && [[ $tempNum -le $numSeasons ]]; do
 	episode=$(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].File) | .[]" $dbNameTV)
-	if [[ $episode == *"Season."$tempNum* ]] || [[ $episode == *"S"$tempNum* ]] || [[ $episode == *"S0"$tempNum* ]]; then
+	if [[ $episode == *"Season."$tempNum* ]] || [[ $episode == *"S0"$tempNum* ]] || [[ $episode == *"S"$tempNum* ]]; then
 		name="S${tempNum}E${realEpNum}"
 		name=$(basename $episode)
 		htmlStr+="\n<li>\n<input id=\"D${myID}_${epNum}\" class=\"epButton\" onclick=\"javascript:showVideoModal(this)\" type=\"button\" value=\"${name}\" >\n"
 		htmlStr+="<div id=\"E${myID}_${epNum}\" class=\"modal\">\n<div class=\"modal-content\">"
 		htmlStr+="\n<video id=\"F${myID}_${epNum}\" class=\"video_player\" controls preload=\"none\">\n<source src=\"${episode}\" type=\"video/mp4\">\n</video>\n<span onclick=\"javascript:hideVideoModal()\" class=\"close\">&times;</span>\n</div>\n</div>\n</li>"
 		((realEpNum++))
+                ((epNum++))
 	else
 		((tempNum++))
 		htmlStr+="\n</ul>\n<ul id=\"C${myID}_${tempNum}\" class=\"showEpUl\">"
 		realEpNum=1
 	fi
-	((epNum++))
 done
 htmlStr+="\n</ul>\n</div>\n</div>\n</div>"
 echo -e $htmlStr >> $TVhtml

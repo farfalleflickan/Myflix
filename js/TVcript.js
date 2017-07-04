@@ -8,8 +8,9 @@ function changeSeason(elem) {
     ulElement.style.display = "none";
     var e = document.getElementById(elem.id);
     var myVal = e.options[e.selectedIndex].value;
-    tempStr = elem.id.replace("selector", "C");
-    tempStr = tempStr.substring(0, tempStr.lastIndexOf('C') + 2) + "_" + String(myVal);
+    var tempStr = elem.id.replace("selector", "C"); 
+    tempStr = tempStr.split("C").pop();
+    tempStr = "C" + tempStr + String(myVal);
     ulElement = document.getElementById(String(tempStr));
     ulElement.style.display = "block";
 }
@@ -22,7 +23,8 @@ function showModal(elem) {
     selElement = document.getElementById(String(tempStr)+String("_"));
     var myVal = selElement.value;
     tempStr = tempStr.replace("selector", "C");
-    tempStr = tempStr.substring(0, tempStr.lastIndexOf('C') + 2) + "_" + String(myVal);
+    tempStr = tempStr.split("C").pop();
+    tempStr = "C" + tempStr + "_" + String(myVal);
     ulElement = document.getElementById(String(tempStr));
     modal.style.display = "block";
     ulElement.style.display = "block";
