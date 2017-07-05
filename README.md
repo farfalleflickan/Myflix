@@ -14,16 +14,19 @@ Features :
 * uses BASH for everything... at least so far!
 * Movie and TV show databases are saved in an user friendly database
 * Lightweight and highly customisable, just open a script and edit it! 
+* Once you have built the database and the webpage, it's done. No streaming server or anything of the like...
+* Since there is no real service, you could build the database and webpages on another machine, moving the webpage to the actual web server afterwards. ( keep in mind that the webserver must have access to the files etc...)
 
 Issues :
-* "Slow" file scanning, scanning 1200+ TV shows files while getting metadata (so, IDs and posters ) took around 2:30 minutes, no metadata = faster scanning! 
+* "Slow" file scanning, scanning 1200+ TV shows files while getting metadata all kinds of metadata (so show id, posters for the show and the name of every episode...) took almost 20 minutes on an old odroid-c1... Skipping some metadata speeds up the process a lot ( episode name is the biggest culprit...)
 * No comments... Whoops...
 * Pretty useless at the moment...
 * not really an issue imho, but it's html5 reliant, so all video files HAVE to be mp4's, no transcoding is going to happen. If you want transcoding, use something fancier like Emby
 
 TO-DO:
-* Subtitle support (in VTT)
+* Subtitle support (in VTT) (somewhat implemented)
 * Separate metadata download and database creation... maybe... 
+* Splitting the TV database into "per show/season" files, would probably speed up things a lot (not sure, i personally prefer one file)
 * A decent tutorial
 
 More in the coming days...
