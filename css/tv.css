@@ -88,3 +88,28 @@ body {
 .epButton:hover {
     background-color: #999999;
 }
+
+.nextEpDiv {
+	width: 100%;
+	text-align: center;
+}
+
+.nextEpButton {
+	margin: 0 auto;
+	display: inline-block;
+}
+
+.prevEpButton {
+	margin: 0 auto;
+	display: inline-block;
+
+}
+
+.autoButtonLabel {
+	margin: 0 auto;
+	display: inline-block;
+}
+.autoButton {
+}
+
+

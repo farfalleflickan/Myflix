@@ -3,6 +3,7 @@ var ulElement = "";
 var selElement = "";
 var videoModal = "";
 var player = "";
+var autoSwitchEpisode=false;
 
 function changeSeason(elem) {
     ulElement.style.display = "none";
@@ -55,6 +56,63 @@ function setAlt(elem, altStr){
     me.alt = altStr;
     me.style.display = "inline";
 }
+
+function prevEp(){
+	var index = videoModal.id.indexOf("_");
+	var myID = videoModal.id.substr(0, index+1);
+	var currentNum = parseInt(videoModal.id.substr(index+1));
+	if (currentNum !== 0){
+		videoModal.style.display = "none";
+	 	player.pause();
+    		player = "";
+		currentNum-=1;
+		tempStr=String(myID)+String(currentNum);
+		videoModal = document.getElementById(tempStr);
+		videoModal.style.display = "block";
+		tempStr = tempStr.replace("E", "F");
+ 		player = document.getElementById(String(tempStr));
+		player.play();
+	}
+}
+
+function nextEp(){
+	videoModal.style.display = "none";
+ 	player.pause();
+	player = "";
+	var index = videoModal.id.indexOf("_");
+	var myID = videoModal.id.substr(0, index+1);
+	var currentNum = parseInt(videoModal.id.substr(index+1));
+	currentNum+=1;
+	tempStr=String(myID)+String(currentNum);	
+	videoModal = document.getElementById(tempStr);
+	videoModal.style.display = "block";
+	tempStr = tempStr.replace("E", "F");
+ 	player = document.getElementById(String(tempStr));
+	if (autoSwitchEpisode === true){
+		player.addEventListener('ended',nextEp);
+	}
+	player.play();
+}
+
+function autoSwitch(){
+	if (autoSwitchEpisode === false){
+		autoSwitchEpisode=true;
+		var e = document.getElementsByClassName("autoButton");
+		player.addEventListener('ended',nextEp);	
+		for (var i=0; i< e.length; i++){
+			e[i].checked = true;
+		}
+	} else {
+		autoSwitchEpisode=false;
+		player.removeEventListener('ended',nextEp);	
+		var e = document.getElementsByClassName("autoButton");
+		for (var i=0; i< e.length; i++){
+			e[i].checked = false;
+		}
+	}
+}
+
+
 
 window.onclick = function (event) {
     if (event.target === modal) {
