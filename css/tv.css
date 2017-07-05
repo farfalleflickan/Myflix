@@ -82,4 +82,9 @@ body {
     width: 100%;
     margin: 0;
     padding: 0;
+    background-color: #F0F0F0;
+}
+
+.epButton:hover {
+    background-color: #999999;
 }
