@@ -18,7 +18,7 @@ Features :
 * Since there is no real service, you could build the database and webpages on another machine, moving the webpage to the actual web server afterwards. ( keep in mind that the webserver must have access to the files etc...)
 
 Issues :
-* "Slow" file scanning, scanning 1200+ TV shows files while getting metadata all kinds of metadata (so show id, posters for the show and the name of every episode...) took almost 20 minutes on an old odroid-c1... Skipping some metadata speeds up the process a lot ( episode name is the biggest culprit...)
+* "Slow" file scanning, scanning 1200+ TV shows files while getting metadata all kinds of metadata (so show id, posters for the show and the name of every episode...) took almost 20 minutes on an old odroid-c1... Skipping some metadata speeds up the process a lot ( episode name is the biggest culprit, as it adds a 2-3 seconds to every episode), bringing it down to around 2-3 minutes
 * No comments... Whoops...
 * Pretty useless at the moment...
 * not really an issue imho, but it's html5 reliant, so all video files HAVE to be mp4's, no transcoding is going to happen. If you want transcoding, use something fancier like Emby
