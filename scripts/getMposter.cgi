@@ -37,7 +37,7 @@ if [[ ! -z "$TMDBapi" ]]; then
 			convert -resize $imgResizeMo $dMoFolder$output $dMoFolder$output
 		fi
 		if $compressImgMo; then
-			convert -strip -interlace Plane -gaussian-blur 0.05 -quality 85% $dMoFolder$output $dMoFolder$output
+			convert -strip -interlace Plane -gaussian-blur 0.05 -quality 90% $dMoFolder$output $dMoFolder$output
 		fi
 		if [[ ! -z "$tinyPNGapi" ]]; then
 			imgUrl=$(curl -s --user api:$tinyPNGapi  --data-binary @$dMoFolder$output https://api.tinify.com/shrink | jq -r '.output.url')

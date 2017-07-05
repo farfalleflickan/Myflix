@@ -16,6 +16,12 @@ function hideModal(){
     player = "";
 }
 
+function setAlt(elem, altStr){
+    var me = document.getElementById(elem.id);
+    me.alt = altStr;
+    me.style.display = "inline";
+}
+
 window.onclick = function(event) {
     if (event.target === modal) {
         modal.style.display = "none";

@@ -2,13 +2,19 @@
 
 cd "$(dirname "$0")"
 if [ "$#" -eq 0 ]; then
-	echo "$0": usage: getTVid.cgi nameOfSeries
-	exit 1
+    echo "$0": usage: getTVid.cgi nameOfSeries
+    exit 1
 fi
+TMDBapi=""
 
-show=${1}
-show=${show// /%20}
-output=$(curl -s "http://thetvdb.com/api/GetSeries.php?seriesname=\""${show}"\"" | grep "<seriesid>" | head -n1)
-output=${output#*>}
-output=${output%<*}
-echo $output
+. config.cfg
+
+if [[ ! -z "$TMDBapi" ]]; then
+    show=${1}
+    show=${show// /%20}
+    myUrl="https://api.themoviedb.org/3/search/tv?page=1&query="${show}"&language=en&api_key="${TMDBapi}
+    output=$(curl -s --request GET --url $myUrl --data '{}' | jq -r '.results[0].id')
+    echo $output
+else
+	echo "null"
+fi
