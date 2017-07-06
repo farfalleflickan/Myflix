@@ -29,19 +29,32 @@ htmlStr+="\n</select>\n<ul id=\"C${myID}_${tempNum}\" class=\"showEpUl\">"
 epNum=0
 realEpNum=1
 while [[ $epNum -le $numEpisodes ]] && [[ $tempNum -le $numSeasons ]]; do
-	episode=$(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].File) | .[]" $dbNameTV)
-	if [[ $episode == *"Season."$tempNum* ]] || [[ $episode == *"S0"$tempNum* ]] || [[ $episode == *"S"$tempNum* ]]; then
-		name=$(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Title) | .[]" $dbNameTV)
-		htmlStr+="\n<li>\n<input id=\"D${myID}_${epNum}\" class=\"epButton\" onclick=\"javascript:showVideoModal(this)\" type=\"button\" value=\"${name}\" >\n"
-		htmlStr+="<div id=\"E${myID}_${epNum}\" class=\"modal\">\n<div class=\"modal-content\">"
-		htmlStr+="\n<video id=\"F${myID}_${epNum}\" class=\"video_player\" controls preload=\"none\">\n<source src=\"${episode}\" type=\"video/mp4\">\n</video>\n<span onclick=\"javascript:hideVideoModal()\" class=\"close\">&times;</span>\n<div class=\"nextEpDiv\">\n<input class=\"prevEpButton\" onclick=\"javascript:prevEp()\" type=\"button\" value=\"Prev episode\" >\n<input class=\"nextEpButton\" onclick=\"javascript:nextEp()\" type=\"button\" value=\"Next episode\">\n<label class=\"autoButtonLabel\">\n<input class=\"autoButton\" onclick=\"javascript:autoSwitch()\" type=\"checkbox\" value=\"Automatic\">Automatic</label>\n</div>\n</div>\n</div>\n</li>"
-		((realEpNum++))
-                ((epNum++))
-	else
-		((tempNum++))
-		htmlStr+="\n</ul>\n<ul id=\"C${myID}_${tempNum}\" class=\"showEpUl\">"
-		realEpNum=1
-	fi
+    episode=$(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].File) | .[]" $dbNameTV)
+    if [[ $episode == *"Season."$tempNum* ]] || [[ $episode == *"S0"$tempNum* ]] || [[ $episode == *"S"$tempNum* ]]; then
+        name=$(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Title) | .[]" $dbNameTV)
+        if [[ -z $name ]]; then
+            name="S${tempNum}E${realEpNum}";
+        fi
+        htmlStr+="\n<li>\n<input id=\"D${myID}_${epNum}\" class=\"epButton\" onclick=\"javascript:showVideoModal(this)\" type=\"button\" value=\"${name}\" >\n"
+        htmlStr+="<div id=\"E${myID}_${epNum}\" class=\"modal\">\n<div class=\"modal-content\">"
+        htmlStr+="\n<video id=\"F${myID}_${epNum}\" class=\"video_player\" controls preload=\"none\">\n<source src=\"${episode}\" type=\"video/mp4\">"
+        mySub=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[].subFile) | .[]" $dbNameTV))
+        mySubNum=${#mySub[@]}
+        tempIndex=0;
+        while [ $tempIndex -lt $mySubNum ]; do
+            myLang=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[${tempIndex}].lang) | .[]" $dbNameTV))
+            myLabel=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[${tempIndex}].label) | .[]" $dbNameTV))
+            htmlStr+="\n<track src=\"${mySub[${tempIndex}]}\" kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\">"
+            ((tempIndex++))
+        done
+        htmlStr+="\n</video>\n<span onclick=\"javascript:hideVideoModal()\" class=\"close\">&times;</span>\n<div class=\"nextEpDiv\">\n<input class=\"prevEpButton\" onclick=\"javascript:prevEp()\" type=\"button\" value=\"Prev episode\" >\n<input class=\"nextEpButton\" onclick=\"javascript:nextEp()\" type=\"button\" value=\"Next episode\">\n<label class=\"autoButtonLabel\">\n<input class=\"autoButton\" onclick=\"javascript:autoSwitch()\" type=\"checkbox\" value=\"Automatic\">Automatic</label>\n</div>\n</div>\n</div>\n</li>"
+        ((realEpNum++))
+        ((epNum++))
+    else
+        ((tempNum++))
+        htmlStr+="\n</ul>\n<ul id=\"C${myID}_${tempNum}\" class=\"showEpUl\">"
+        realEpNum=1
+    fi
 done
 htmlStr+="\n</ul>\n</div>\n</div>\n</div>"
 echo -e $htmlStr >> $TVhtml

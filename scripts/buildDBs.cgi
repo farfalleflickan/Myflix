@@ -7,5 +7,5 @@ cd "$(dirname "$0")"
 
 find $MoviesPath -iname "*.mp4" -exec ./parseMfilename.cgi {} \;
 find $TVpath -name "*.mp4"| sort | while read file; do
-	./parseTVfilename.cgi $file
+    ./parseTVfilename.cgi $file
 done

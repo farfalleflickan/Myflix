@@ -8,6 +8,8 @@ fi
 
 dbNameMovie="../dbM.json"
 regexM="(.*)[.](.*)";
+fetchMmetadata=false
+createMsubs=false
 
 . config.cfg
 if [ ! -f $dbNameMovie ]; then
@@ -21,68 +23,75 @@ if [[ "${filename}" =~ ${regexM} ]]; then
 	if [ -s $dbNameMovie ]; then
 		if ! grep -q ${file} $dbNameMovie; then
 			myPoster="";
+                        if $fetchMmetadata; then
+                            if [[ $movie == *"Departures"* ]]; then
+                                    myID="1069238";
+                            elif [[ $movie == *"Pilgrim"* ]]; then
+                                    myID="0446029";
+                            elif [[ $movie == *"Guide.to.the.Galaxy"*  ]]; then
+                                    myID="0371724";
+                            else
+                                    myID=$(./getMid.cgi "${movie}");
+                            fi
 
-			if [[ $movie == *"Departures"* ]]; then
-				myID="1069238";
-			elif [[ $movie == *"Pilgrim"* ]]; then
-				myID="0446029";
-			elif [[ $movie == *"Guide.to.the.Galaxy"*  ]]; then
-				myID="0371724";
-			else
-				myID=$(./getMid.cgi "${movie}");
-			fi
-
-			if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
-				myPoster=$(./getMposter.cgi "${myID}");
-			else
-				myID=""
-				myPoster=""
-			fi
-			tempPath=$(dirname $file)"/"
-			searchPath="../"$tempPath"/"
-			sub=""
-			if [[ -f $searchPath$movie".vtt" ]]; then
-				sub=$tempPath$movie".vtt"
-			else
-				sub=$(find $searchPath -name "*.srt")
-				if [[ -f $sub ]]; then
-					$(ffmpeg -i $sub $searchPath$movie".vtt" 2> /dev/null )
-					sub=$tempPath$movie".vtt"
-				fi
-			fi
+                            if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
+                                    myPoster=$(./getMposter.cgi "${myID}");
+                            else
+                                    myID=""
+                                    myPoster=""
+                            fi
+                            if $createMsubs; then
+                                tempPath=$(dirname $file)"/"
+                                searchPath="../"$tempPath"/"
+                                sub=""
+                                if [[ -f $searchPath$movie".vtt" ]]; then
+                                        sub=$tempPath$movie".vtt"
+                                else
+                                        sub=$(find $searchPath -name "*.srt")
+                                        if [[ -f $sub ]]; then
+                                                $(ffmpeg -i $sub $searchPath$movie".vtt" 2> /dev/null )
+                                                sub=$tempPath$movie".vtt"
+                                        fi
+                                fi
+                            fi
+                        fi
 			movie=${movie//./ }
 			jq -r ". |= . + [{\"Movie\":\"${movie}\",\"ID\":\"${myID}\",\"Poster\":\"${myPoster}\",\"File\":\"${file}\",\"Subs\":[{\"subFile\":\"${sub}\", \"lang\":\"en\", \"label\":\"English\"}]}]" $dbNameMovie | sponge $dbNameMovie;
 		fi
 	else
 		myPoster="";
-		if [[ $movie == *"Departures"* ]]; then
-			myID="1069238";
-		elif [[ $movie == *"Pilgrim"* ]]; then
-			myID="0446029";
-		elif [[ $movie == *"Guide.to.the.Galaxy"*  ]]; then
-			myID="0371724";
-		else
-			myID=$(./getMid.cgi "${movie}");
-		fi
+                if $fetchMmetadata; then
+                    if [[ $movie == *"Departures"* ]]; then
+                            myID="1069238";
+                    elif [[ $movie == *"Pilgrim"* ]]; then
+                            myID="0446029";
+                    elif [[ $movie == *"Guide.to.the.Galaxy"*  ]]; then
+                            myID="0371724";
+                    else
+                            myID=$(./getMid.cgi "${movie}");
+                    fi
 
-		if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
-			myPoster=$(./getMposter.cgi "${myID}");
-		else
-			myID=""
-			myPoster=""
-		fi
-		tempPath=$(dirname $file)
-		tempPath="../"$tempPath"/"
-		sub=""
-		if [[ -f $tempPath$movie".vtt" ]]; then
-			sub=$tempPath$movie".vtt"
-		else
-			sub=$(find $tempPath -name "*.srt")
-			if [[ -f $sub ]]; then
-				$(ffmpeg -i $sub $tempPath$movie".vtt" 2> /dev/null )
-				sub=$tempPath$movie".vtt"
-			fi
-		fi
+                    if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
+                            myPoster=$(./getMposter.cgi "${myID}");
+                    else
+                            myID=""
+                            myPoster=""
+                    fi
+                    if $createMsubs; then
+                        tempPath=$(dirname $file)
+                        tempPath="../"$tempPath"/"
+                        sub=""
+                        if [[ -f $tempPath$movie".vtt" ]]; then
+                                sub=$tempPath$movie".vtt"
+                        else
+                                sub=$(find $tempPath -name "*.srt")
+                                if [[ -f $sub ]]; then
+                                        $(ffmpeg -i $sub $tempPath$movie".vtt" 2> /dev/null )
+                                        sub=$tempPath$movie".vtt"
+                                fi
+                        fi
+                    fi
+                fi
 		movie=${movie//./ }
 		printf '[{"Movie":"%s", "ID":"%s", "Poster":"%s", "File":"%s", "Subs":[{"subFile":"%s", "lang":"en","label":"English"}]}]\n' "${movie}" "${myID}" "${myPoster}" "${file}" "${sub}"  > $dbNameMovie;
 	fi
