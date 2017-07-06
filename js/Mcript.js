@@ -29,3 +29,17 @@ window.onclick = function(event) {
         player = "";
     }
 };
+
+function showModalsetSubs(elem, srcStr) {
+    var tempStr = elem.id;
+    tempStr = tempStr.replace("A", "B");
+    modal = document.getElementById(String(tempStr));
+    tempStr = tempStr.replace("B", "C");
+    player = document.getElementById(String(tempStr));
+    modal.style.display = "block";
+    var subNum=parseInt(player.childElementCount)-1;
+    var array = srcStr.split(',');
+    for (var i=1, j=0; i<=subNum; i++, j++){
+        player.children[i].src=array[j];
+    }
+}

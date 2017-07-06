@@ -40,6 +40,20 @@ function showVideoModal(elem) {
     videoModal.style.display = "block";
 }
 
+function showVideoModalsetSubs(elem, srcStr) {
+    var tempStr = elem.id;
+    tempStr = tempStr.replace("D", "E");
+    videoModal = document.getElementById(String(tempStr));
+    tempStr = tempStr.replace("E", "F");
+    player = document.getElementById(String(tempStr));
+    videoModal.style.display = "block";
+    var subNum=parseInt(player.childElementCount)-1;
+    var array = srcStr.split(',');
+    for (var i=1, j=0; i<=subNum; i++, j++){
+        player.children[i].src=array[j];
+    }
+}
+
 function hideModal() {
     modal.style.display = "none";
     ulElement.style.display = "none";

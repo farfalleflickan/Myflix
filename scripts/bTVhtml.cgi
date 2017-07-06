@@ -21,8 +21,8 @@ numEpisodes=${#myEpisodes[@]}
 htmlStr+="\n<span onclick=\"javascript:hideModal()\" class=\"close\">&times;</span>\n<select id=\"selector${myID}_\" onchange=\"javascript:changeSeason(this)\" class=\"showSelect\">"
 tempNum=0    
 while [[ $tempNum -lt $numSeasons ]]; do
-	((tempNum++))
-	htmlStr+="\n<option value=\"${tempNum}\">Season $tempNum</option>"
+    ((tempNum++))
+    htmlStr+="\n<option value=\"${tempNum}\">Season $tempNum</option>"
 done
 tempNum=1
 htmlStr+="\n</select>\n<ul id=\"C${myID}_${tempNum}\" class=\"showEpUl\">"
@@ -35,18 +35,28 @@ while [[ $epNum -le $numEpisodes ]] && [[ $tempNum -le $numSeasons ]]; do
         if [[ -z $name ]]; then
             name="S${tempNum}E${realEpNum}";
         fi
-        htmlStr+="\n<li>\n<input id=\"D${myID}_${epNum}\" class=\"epButton\" onclick=\"javascript:showVideoModal(this)\" type=\"button\" value=\"${name}\" >\n"
-        htmlStr+="<div id=\"E${myID}_${epNum}\" class=\"modal\">\n<div class=\"modal-content\">"
-        htmlStr+="\n<video id=\"F${myID}_${epNum}\" class=\"video_player\" controls preload=\"none\">\n<source src=\"${episode}\" type=\"video/mp4\">"
         mySub=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[].subFile) | .[]" $dbNameTV))
         mySubNum=${#mySub[@]}
         tempIndex=0;
-        while [ $tempIndex -lt $mySubNum ]; do
-            myLang=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[${tempIndex}].lang) | .[]" $dbNameTV))
-            myLabel=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[${tempIndex}].label) | .[]" $dbNameTV))
-            htmlStr+="\n<track src=\"${mySub[${tempIndex}]}\" kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\">"
-            ((tempIndex++))
-        done
+        tempHtmlStr="";
+        subsStr="";
+        if [ $mySubNum -ge 1 ]; then
+            while [ $tempIndex -lt $mySubNum ]; do
+                myLang=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[${tempIndex}].lang) | .[]" $dbNameTV))
+                myLabel=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[${tempIndex}].label) | .[]" $dbNameTV))
+                subsStr+="\n<track src='' kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\">"
+                tempSub=${mySub[${tempIndex}]}
+                tempSub=$(sed s/\'/"\\\'"/ <<< $tempSub)
+                tempHtmlStr+=${tempSub}","
+                ((tempIndex++))
+            done
+            htmlStr+="\n<li>\n<input id=\"D${myID}_${epNum}\" class=\"epButton\" onclick=\"javascript:showVideoModalsetSubs(this,'"${tempHtmlStr}"')\" type=\"button\" value=\"${name}\" >\n"
+        else
+            htmlStr+="\n<li>\n<input id=\"D${myID}_${epNum}\" class=\"epButton\" onclick=\"javascript:showVideoModal(this)\" type=\"button\" value=\"${name}\" >\n"
+        fi
+        htmlStr+="<div id=\"E${myID}_${epNum}\" class=\"modal\">\n<div class=\"modal-content\">"
+        htmlStr+="\n<video id=\"F${myID}_${epNum}\" class=\"video_player\" controls preload=\"none\">\n<source src=\"${episode}\" type=\"video/mp4\">"
+        htmlStr+=${subsStr};
         htmlStr+="\n</video>\n<span onclick=\"javascript:hideVideoModal()\" class=\"close\">&times;</span>\n<div class=\"nextEpDiv\">\n<input class=\"prevEpButton\" onclick=\"javascript:prevEp()\" type=\"button\" value=\"Prev episode\" >\n<input class=\"nextEpButton\" onclick=\"javascript:nextEp()\" type=\"button\" value=\"Next episode\">\n<label class=\"autoButtonLabel\">\n<input class=\"autoButton\" onclick=\"javascript:autoSwitch()\" type=\"checkbox\" value=\"Automatic\">Automatic</label>\n</div>\n</div>\n</div>\n</li>"
         ((realEpNum++))
         ((epNum++))
@@ -55,11 +65,14 @@ while [[ $epNum -le $numEpisodes ]] && [[ $tempNum -le $numSeasons ]]; do
         htmlStr+="\n</ul>\n<ul id=\"C${myID}_${tempNum}\" class=\"showEpUl\">"
         realEpNum=1
     fi
+    echo -e $htmlStr >> $TVhtml
+    htmlStr=""
 done
 htmlStr+="\n</ul>\n</div>\n</div>\n</div>"
 echo -e $htmlStr >> $TVhtml
+htmlStr=""
 ((myID++))
 done
 echo -e '\n</body>\n</html>' >> $TVhtml
-
+htmlStr=""
 chmod 755 $TVhtml
