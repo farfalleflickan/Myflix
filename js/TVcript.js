@@ -4,6 +4,45 @@ var selElement = "";
 var videoModal = "";
 var player = "";
 var autoSwitchEpisode = false;
+var isFullscreen = 1;
+
+document.addEventListener("fullscreenchange", FShandler);
+document.addEventListener("webkitfullscreenchange", FShandler);
+document.addEventListener("mozfullscreenchange", FShandler);
+document.addEventListener("MSFullscreenChange", FShandler);
+document.addEventListener("keydown", function (e) {
+    if (e.keyCode === 70) {
+        if (isFullscreen % 2 === 0) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        } else {
+            if (player.requestFullscreen) {
+                player.requestFullscreen();
+            } else if (player.msRequestFullscreen) {
+                player.msRequestFullscreen();
+            } else if (player.mozRequestFullScreen) {
+                player.mozRequestFullScreen();
+            } else if (player.webkitRequestFullscreen) {
+                player.webkitRequestFullscreen();
+            }
+        }
+    } else if (e.keyCode === 37) {
+        player.currentTime -= 15;
+    } else if (e.keyCode === 39) {
+        player.currentTime += 15;
+    }
+}, false);
+
+function FShandler() {
+    isFullscreen++;
+}
 
 function changeSeason(elem) {
     ulElement.style.display = "none";
@@ -47,10 +86,10 @@ function showVideoModalsetSubs(elem, srcStr) {
     tempStr = tempStr.replace("E", "F");
     player = document.getElementById(String(tempStr));
     videoModal.style.display = "block";
-    var subNum=parseInt(player.childElementCount)-1;
+    var subNum = parseInt(player.childElementCount) - 1;
     var array = srcStr.split(',');
-    for (var i=1, j=0; i<=subNum; i++, j++){
-        player.children[i].src=array[j];
+    for (var i = 1, j = 0; i <= subNum; i++, j++) {
+        player.children[i].src = array[j];
     }
 }
 
@@ -113,6 +152,17 @@ function nextEp() {
         }
         if (autoSwitchEpisode === true) {
             player.addEventListener('ended', nextEp);
+        }
+        if (isFullscreen % 2 === 0) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
         }
         player.play();
     }

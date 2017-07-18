@@ -1,7 +1,7 @@
 #! /bin/bash
 
 cd "$(dirname "$0")"
-if [ "$#" -eq 0 ]; then
+if [ "$#" -ne 1 ]; then
 	echo "$0": usage: parseTVfilename.cgi /path/to/file
 	exit 1
 fi
@@ -40,6 +40,9 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
                                             myTitle=$(curl -s --request GET --url $myUrl --data '{}' | jq -r '.name')
                                             myTitle=$(echo ${myTitle} | sed "s/'//g")
                                             myTitle=$(echo ${myTitle} | sed "s/\"//g")
+											if [[ "${myTitle}" == "null" ]]; then
+							                    myTitle=""
+                							fi
                                     fi
                                     if $createTVsubs; then
                                         show=${1%%.mp4}
@@ -67,6 +70,9 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
                                             myTitle=$(curl -s --request GET --url $myUrl --data '{}' | jq -r '.name')
                                             myTitle=$(echo ${myTitle} | sed "s/'//g")
                                             myTitle=$(echo ${myTitle} | sed "s/\"//g")
+											if [[ "${myTitle}" == "null" ]]; then
+							                    myTitle=""
+                							fi
                                     fi
                                     myPoster=$(./getTVposter.cgi "${myID}");
                             else
@@ -102,6 +108,9 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
 					myTitle=$(curl -s --request GET --url $myUrl --data '{}' | jq -r '.name')
 					myTitle=$(echo ${myTitle} | sed "s/'//g")
 					myTitle=$(echo ${myTitle} | sed "s/\"//g")
+					if [[ "${myTitle}" == "null" ]]; then
+                    	myTitle=""
+                	fi
 				fi
 				myPoster=$(./getTVposter.cgi "${myID}");
 			else

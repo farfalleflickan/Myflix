@@ -1,7 +1,7 @@
 #! /bin/bash
 
 cd "$(dirname "$0")"
-if [ "$#" -eq 0 ]; then
+if [ "$#" -ne 1 ]; then
 	echo "$0": usage: getTVposter.cgi ID
 	exit 1
 fi

@@ -7,10 +7,13 @@ Mhtml=../Movies.html
 
 . config.cfg
 
-printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"UTF-8\">\n<meta name=\"description\" content=\"Dario Rostirolla\">\n<meta name=\"keywords\" content=\"HTML, CSS\">\n<meta name=\"author\" content=\"Dario Rostirolla\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link href=\"css/movie.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.png\">\n</head>\n<body>\n<script async type=\"text/javascript\" src=\"js/Mcript.js\"></script>" > $Mhtml
+printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"UTF-8\">\n<meta name=\"description\" content=\"Dario Rostirolla\">\n<meta name=\"keywords\" content=\"HTML, CSS\">\n<meta name=\"author\" content=\"Dario Rostirolla\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link href=\"css/movie.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.png\">\n</head>\n<body>\n<script async type=\"text/javascript\" src=\"js/Mcript.js\"></script><div id=\"wrapper\">" > $Mhtml
 myID=1
 jq -r '.[].Movie' $dbNameMovie | while read i; do
     myImg=$(jq -r "map(select(.Movie | contains(\"${i}\")) .Poster) | .[]" $dbNameMovie)
+	if [ $myImg = "null"  ]; then
+		myImg=""
+	fi
     myFile=$(jq -r "map(select(.Movie | contains(\"${i}\")) .File) | .[]" $dbNameMovie)
     mySub=($(jq -r "map(select(.Movie | contains(\"${i}\")) .Subs[].subFile) | .[]" $dbNameMovie))
     mySubNum=${#mySub[@]}
@@ -39,6 +42,6 @@ jq -r '.[].Movie' $dbNameMovie | while read i; do
     htmlStr=""
     ((myID++))
 done
-echo -e '\n</body>\n</html>' >> $Mhtml
+echo -e '\n</div>\n</body>\n</html>' >> $Mhtml
 
 chmod 755 $Mhtml

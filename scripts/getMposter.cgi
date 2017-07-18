@@ -1,7 +1,7 @@
 #! /bin/bash
 
 cd "$(dirname "$0")"
-if [ "$#" -eq 0 ]; then
+if [ "$#" -ne 1 ]; then
 	echo "$0": usage: getMposter.cgi ID
 	exit 1
 fi
@@ -23,8 +23,13 @@ if [[ ! -z "$TMDBapi" ]]; then
 	if [[ $output == *".jpg"* ]]; then
 		output="https://image.tmdb.org/t/p/original"$output;
 	else
-		echo "null"
-		exit
+		output=$(curl -s --request GET --url $myUrl --data '{}' | jq -r '.posters[0].file_path' )
+		if [[ $output == *".jpg"* ]]; then
+			output="https://image.tmdb.org/t/p/original"$output;
+		else
+			echo "null";
+			exit;
+		fi
 	fi
 
 	if $dMoImg; then

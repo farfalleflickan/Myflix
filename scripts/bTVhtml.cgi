@@ -7,7 +7,7 @@ TVhtml=../TV.html
 
 . config.cfg
 
-printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"UTF-8\">\n<meta name=\"description\" content=\"Dario Rostirolla\">\n<meta name=\"keywords\" content=\"HTML, CSS\">\n<meta name=\"author\" content=\"Dario Rostirolla\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link href=\"css/tv.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.png\">\n</head>\n<body>\n<script async type=\"text/javascript\" src=\"js/TVcript.js\"></script>" > $TVhtml
+printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"UTF-8\">\n<meta name=\"description\" content=\"Dario Rostirolla\">\n<meta name=\"keywords\" content=\"HTML, CSS\">\n<meta name=\"author\" content=\"Dario Rostirolla\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link href=\"css/tv.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.png\">\n</head>\n<body>\n<script async type=\"text/javascript\" src=\"js/TVcript.js\"></script><div id=\"wrapper\">" > $TVhtml
 myID=1
 jq -r '.[].Show' $dbNameTV | while read i; do
 myAlt=$(echo ${i} | sed "s/'//g")
@@ -73,6 +73,6 @@ echo -e $htmlStr >> $TVhtml
 htmlStr=""
 ((myID++))
 done
-echo -e '\n</body>\n</html>' >> $TVhtml
+echo -e '\n</div>\n</body>\n</html>' >> $TVhtml
 htmlStr=""
 chmod 755 $TVhtml

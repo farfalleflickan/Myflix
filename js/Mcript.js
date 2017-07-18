@@ -1,5 +1,44 @@
 var modal = "";
 var player = "";
+var isFullscreen = 1;
+
+document.addEventListener("fullscreenchange", FShandler);
+document.addEventListener("webkitfullscreenchange", FShandler);
+document.addEventListener("mozfullscreenchange", FShandler);
+document.addEventListener("MSFullscreenChange", FShandler);
+document.addEventListener("keydown", function (e) {
+    if (e.keyCode === 70) {
+        if (isFullscreen % 2 === 0) {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen();
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen();
+            }
+        } else {
+            if (player.requestFullscreen) {
+                player.requestFullscreen();
+            } else if (player.msRequestFullscreen) {
+                player.msRequestFullscreen();
+            } else if (player.mozRequestFullScreen) {
+                player.mozRequestFullScreen();
+            } else if (player.webkitRequestFullscreen) {
+                player.webkitRequestFullscreen();
+            }
+        }
+    } else if (e.keyCode === 37) {
+        player.currentTime -= 15;
+    } else if (e.keyCode === 39) {
+        player.currentTime += 15;
+    }
+}, false);
+
+function FShandler() {
+    isFullscreen++;
+}
 
 function showModal(elem){
 	var tempStr = elem.id;
