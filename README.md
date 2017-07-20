@@ -25,8 +25,8 @@ Issues :
 * not really an issue imho, but it's html5 reliant, so all video files HAVE to be h264 mp4's, no transcoding is going to happen. If you want transcoding, use something fancier like Emby
 
 TO-DO:
-* Separate metadata download and database creation... maybe... 
-* Splitting the TV database into "per show/season" files, would probably speed up things a lot (not sure, i personally prefer one file)
+* Separate metadata download and database creation... (MAYBE?)
+* Splitting the TV database into "per show/season" files, would probably speed up things a lot (MAYBE? I kinda like it this way)
 * A decent tutorial
 
 More in the coming days...
