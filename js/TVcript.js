@@ -37,6 +37,12 @@ document.addEventListener("keydown", function (e) {
         player.currentTime -= 15;
     } else if (e.keyCode === 39) {
         player.currentTime += 15;
+    } else if (e.keyCode === 32) {
+        if(player.paused){
+        	player.play();
+    	} else {
+        	player.pause();
+    	}
     }
 }, false);
 
@@ -108,6 +114,13 @@ function setAlt(elem, altStr) {
     var me = document.getElementById(elem.id);
     me.alt = altStr;
     me.style.display = "inline";
+}
+
+function resetPlayer(){
+    var myTime = player.currentTime;
+    player.load();
+    player.currentTime = myTime;
+    player.play;
 }
 
 function prevEp() {

@@ -45,12 +45,15 @@ body {
 } 
 .showDiv{
     float: left;
-    margin-left: 5px
+    margin: 5px;
+    display: table;
 }
 
 .myBtn {
-    height:auto;
     width: 19vw;
+    position: relative;
+    float: left;
+    overflow: hidden;
     display: none;
 }
 
@@ -112,4 +115,6 @@ body {
 .autoButton {
 }
 
-
+#wrapper {
+    margin: 0 auto;
+}

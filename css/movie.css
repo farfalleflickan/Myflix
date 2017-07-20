@@ -44,7 +44,8 @@ body {
 } 
 .movieDiv{
     float: left;
-    margin: 5px
+    margin: 5px;
+    display: table;
 }
 
 .myBtn {
@@ -69,4 +70,9 @@ body {
 .video_player{
     width: 80%;
     margin-left: 10%;
+}
+
+#wrapper {
+    margin: 0 auto;
+    padding-left: 3vw;
 }

@@ -33,6 +33,12 @@ document.addEventListener("keydown", function (e) {
         player.currentTime -= 15;
     } else if (e.keyCode === 39) {
         player.currentTime += 15;
+    } else if (e.keyCode === 32) {
+        if(player.paused){
+                player.play();
+        } else {
+                player.pause();
+        }
     }
 }, false);
 
