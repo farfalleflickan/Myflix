@@ -5,6 +5,23 @@ Myflix tries to be a somewhat simple and lightweight "DIY Netflix", similar to P
 I am by no means experienced in bash development or with... this kind of stuff. I'm pretty sure I have done some horrible things and a lot of what I have done could be done better (like, by using an actual database like sql or something...), but I tried my best. I also wanted to keep this as lightweight and simple as possible, in order to not use too much processor power when an user is actually streaming something and easy editing in case something in the database is wrong, which I feel json achieved very well.    
 I still have some commenting to do, I swear I will do it when I have time...
 
+# Sreenshots:  
+TV shows page  
+![TV shows](https://github.com/pastapojken/Myflix/blob/screenshots/ec53e53f252f908bc8bac7f8c4486790.jpg)   
+
+TV show season/episode modal
+![TV show episodes](https://github.com/pastapojken/Myflix/blob/screenshots/fb31129a22d81b732ce88f02cae27fea.jpg)  
+
+
+TV show episode player
+![TV show episode player](https://github.com/pastapojken/Myflix/blob/screenshots/102b3df4924efeae7476d6ceee79bec9.png)
+
+Movies page
+![Movies](https://github.com/pastapojken/Myflix/blob/screenshots/d4271907a9af78d8dd84f3941ca1e56a.jpg)  
+
+Movies player
+![Movies player](https://github.com/pastapojken/Myflix/blob/screenshots/2eb41c935d1c11e19adb66466bcdf97e.png)
+
 
 ~~**Shitty temporary tutorial:**~~
 
@@ -37,19 +54,4 @@ TO-DO:
 * Multi language, multi subtitle support
 ~~* Currently working on parallelization of the html building process, it's almost working ;D
 
-Sreenshots:  
-TV shows page  
-![TV shows](https://github.com/pastapojken/Myflix/blob/screenshots/ec53e53f252f908bc8bac7f8c4486790.jpg)   
 
-TV show season/episode modal
-![TV show episodes](https://github.com/pastapojken/Myflix/blob/screenshots/fb31129a22d81b732ce88f02cae27fea.jpg)  
-
-
-TV show episode player
-![TV show episode player](https://github.com/pastapojken/Myflix/blob/screenshots/102b3df4924efeae7476d6ceee79bec9.png)
-
-Movies page
-![Movies](https://github.com/pastapojken/Myflix/blob/screenshots/d4271907a9af78d8dd84f3941ca1e56a.jpg)  
-
-Movies player
-![Movies player](https://github.com/pastapojken/Myflix/blob/screenshots/2eb41c935d1c11e19adb66466bcdf97e.png)
