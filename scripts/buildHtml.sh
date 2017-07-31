@@ -16,8 +16,12 @@ case "${1}" in
 	"2") 	#build only tv shows
 		./bTVhtml.sh;;
 	"3")	#build everything
-		./bMhtml.sh
-		./bTVhtml.sh;;
+		./bMhtml.sh &
+		pid1=$!
+		./bTVhtml.sh &
+		pid2=$!
+		wait $pid1
+		wait $pid2;;
 	*)
 		echo "Invalid input, use: #1 for only movies, #2 for only tv shows and #3 for both";;
 esac
