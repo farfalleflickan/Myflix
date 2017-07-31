@@ -3,11 +3,14 @@
 
 Myflix tries to be a somewhat simple and lightweight "DIY Netflix", similar to Plex or Emby, for your DIY NAS, especially aimed at the Raspberry Pi/Odroid/etc ecosystem. It's not meant or designed to be fancy, but the bare minimum to be pretty, fast and usable
 
-**Shitty temporary tutorial:**
+~~**Shitty temporary tutorial:**~~
 
-You will need jq, imagemagick, ffmpeg and a ton of coffee to understand whatthef#ck I did.
+~~You will need jq, imagemagick, ffmpeg and a ton of coffee to understand whatthef#ck I did.
 Download all the files, look around in buildDBs.cgi and config.cfg, set the path of your media files folders and run buildDBs... 
-Pray to a deity of your choice!
+Pray to a deity of your choice!~~
+
+Requirements:
+jq, imagemagick, ffmpeg and a TMDB api key. See the wiki for a tutorial and more detailed information on the scripts.
 
 Features :
 * uses BASH for everything... at least so far!
