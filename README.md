@@ -35,6 +35,12 @@ TO-DO:
 
 Sreenshots:  
 ![TV shows](https://github.com/pastapojken/Myflix/blob/screenshots/ec53e53f252f908bc8bac7f8c4486790.jpg)   
+
+
 ![TV show episodes](https://github.com/pastapojken/Myflix/blob/screenshots/fb31129a22d81b732ce88f02cae27fea.jpg)  
+
+
 ![Movies](https://github.com/pastapojken/Myflix/blob/screenshots/d4271907a9af78d8dd84f3941ca1e56a.jpg)  
+
+
 ![Movies player](https://github.com/pastapojken/Myflix/blob/screenshots/2eb41c935d1c11e19adb66466bcdf97e.png)
