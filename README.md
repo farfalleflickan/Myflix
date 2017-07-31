@@ -35,6 +35,7 @@ TO-DO:
 * Splitting the TV database into "per show/season" files, would probably speed up things a lot (MAYBE? I kinda like it this way)
 * A "fix database" script, that fixes the metadata of a specific file (say, for example, that the script obtained the wrong id or wrong cover for your movie/tv show, this file should just just receive the file path of the file to fix and the correct id for it, and then it will simple overwrite the correct metadata to the database, thus sparing you from searching in the database and manually having to edit/download stuff) 
 * Multi language, multi subtitle support
+* Currently working on parallelization of the html building process, it's almost working ;D
 
 Sreenshots:  
 TV shows page  
