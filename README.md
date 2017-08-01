@@ -44,7 +44,8 @@ Issues :
 * "Slow" file scanning, scanning 1200+ TV shows files while getting all kinds of metadata (so show id, posters for the show and the name of every episode...) took almost 20 minutes on an old odroid-c1... Skipping some metadata speeds up the process a lot ( episode name is the biggest culprit, as it adds a 2-3 seconds to every episode in the database). If I skip it, the time comes down to around 2-3 minutes. Note that this doesn't happen with movies as there is a lot less metadata to be fetched and my nas can perform this task in 30 seconds or so with 40+ movies.
 * "Slow" html generation, the 1200+ tv show files end up creating a html page with 25700 lines of code... ~~Which generates in around 10 minutes...~~ It now is x2 faster thanks to threading! ;) Database creation is the same though, since it's sequential.
 * html5 video player keeps buffering in the background if you play/pause a video. At the moment I have yet to implement a way to stop buffering
-* not really an issue imho, but it's html5 reliant, so all video files HAVE to be h264 mp4's, no transcoding is going to happen. If you want transcoding, use something fancier like Emby ( transcoding might happen. We will see)
+* not really an issue imho, but it's html5 reliant, so all video files HAVE to be h264 mp4's, no transcoding is going to happen. If you want transcoding, use something fancier like Emby ~~( transcoding might happen. We will see)~~
+It won't happen, it would require rtmp streaming, so an rtmp server etc... Getting too complicated, KISS! (keep It Simple, Stupid!) ;)
 
 TO-DO:
 * Separate metadata download and database creation... (MAYBE?)
