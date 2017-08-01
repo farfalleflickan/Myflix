@@ -1,9 +1,8 @@
 # Myflix
 *A Netflix clone!*
 
-Myflix tries to be a somewhat simple and lightweight "DIY Netflix", similar to Plex or Emby, for your DIY NAS, especially aimed at the Raspberry Pi/Odroid/etc ecosystem. It's not meant or designed to be fancy, but the bare minimum to be pretty, fast and usable. The scripts create json databases that store the files location and metadata, these databases are then use to create static web pages that can be served from any web server!    
-I am by no means experienced in bash development or with... this kind of stuff. I'm pretty sure I have done some horrible things and a lot of what I have done could be done better (like, by using an actual database like sql or something...), but I tried my best. I also wanted to keep this as lightweight and simple as possible, in order to not use too much processor power when an user is actually streaming something and easy editing in case something in the database is wrong, which I feel json achieved very well.    
-I still have some commenting to do, I swear I will do it when I have time...
+Myflix tries to be a somewhat simple and lightweight "DIY Netflix", similar to Plex, streama or Emby, for your DIY NAS, especially aimed at the Raspberry Pi/Odroid/etc ecosystem. It's not **meant** or **designed** to be fancy (if you have the hardware and want a ton of functionality, go for other solutions :) ), but the bare minimum to be somewhat pretty, fast and usable. The scripts create json databases that store the files location and metadata, these databases are then used to create static web pages that can be served from any web server!    
+ I still have some commenting to do, I swear I will do it when I have time...
 
 # Sreenshots:  
 TV shows page  
