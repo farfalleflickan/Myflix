@@ -45,13 +45,9 @@ Issues :
 * "Slow" html generation, the 1200+ tv show files end up creating a html page with 25700 lines of code... ~~Which generates in around 10 minutes...~~ It now is x2 faster thanks to threading! ;) Database creation is the same though, since it's sequential.
 * html5 video player keeps buffering in the background if you play/pause a video. At the moment I have yet to implement a way to stop buffering
 * not really an issue imho, but it's html5 reliant, so all video files HAVE to be h264 mp4's, no transcoding is going to happen. If you want transcoding, use something fancier like Emby ~~( transcoding might happen. We will see)~~
-It won't happen, it would require rtmp streaming, so an rtmp server etc... Getting too complicated, KISS! (keep It Simple, Stupid!) ;)
+It won't happen, it would require rtmp streaming, rtmp server etc... Getting too complicated, KISS! (keep It Simple, Stupid!) ;)
 
 TO-DO:
-* Separate metadata download and database creation... (MAYBE?)
-* Splitting the TV database into "per show/season" files, would probably speed up things a lot (MAYBE? I kinda like it this way)
 * A "fix database" script, that fixes the metadata of a specific file (say, for example, that the script obtained the wrong id or wrong cover for your movie/tv show, this file should just just receive the file path of the file to fix and the correct id for it, and then it will simple overwrite the correct metadata to the database, thus sparing you from searching in the database and manually having to edit/download stuff) 
 * ~~Multi language, multi subtitle support~~ DONE
 *  ~~Currently working on parallelization of the html building process, it's almost working ;D~~ DONE
-
-
