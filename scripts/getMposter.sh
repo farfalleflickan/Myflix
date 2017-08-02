@@ -21,8 +21,9 @@ if [[ ! -z "$TMDBapi" ]]; then
 	if [[ $output == *".jpg"* ]]; then
 		output="https://image.tmdb.org/t/p/original"$output;
 	else
-		echo "null"
-		exit
+		myUrl="https://api.themoviedb.org/3/movie/tt"${id}"/images?api_key="$TMDBapi
+		output=$(curl -s --request GET --url $myUrl --data '{}' | jq -r '.posters[0] | .file_path')
+		output="https://image.tmdb.org/t/p/original"$output;
 	fi
 	if $dMoImg; then
 		if [ ! -d "$dMoFolder" ]; then
@@ -46,6 +47,6 @@ if [[ ! -z "$TMDBapi" ]]; then
 	else
 		echo $output
 	fi
-else
+else    
 	echo "null"
 fi

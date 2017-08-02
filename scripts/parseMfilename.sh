@@ -22,8 +22,9 @@ filename=$(basename "$file")
 if [[ "${filename}" =~ ${regexM} ]]; then #if filename matches regex then it's a movie we want to work on!
 	movie=${BASH_REMATCH[1]}; # movie name matches 1st regex match
 	if [ -s $dbNameMovie ]; then #checks if database is empty
-		if ! grep -q ${file} $dbNameMovie; then # if the movie not already in the database
+		if ! grep -q ${filename} $dbNameMovie; then # if the movie not already in the database
 			myPoster="";
+                        subStr='{"subFile":"", "lang":"en","label":"English"}'
 			if $fetchMmetadata; then
 				if [[ $movie == *"Departures"* ]]; then #hardcoded id's for movies
 					myID="1069238";
@@ -41,26 +42,49 @@ if [[ "${filename}" =~ ${regexM} ]]; then #if filename matches regex then it's a
 					myID=""
 					myPoster=""
 				fi
-				if $createMsubs; then 
-					tempPath=$(dirname $file)"/" 
-					searchPath="../"$tempPath"/"
-					sub=""
-					if [[ -f $searchPath$movie".vtt" ]]; then #if sub is already present
-						sub=$tempPath$movie".vtt"
-					else
-						sub=$(find $searchPath -name "*.srt") #searches for a srt in same folder as movie
-						if [[ -f $sub ]]; then
-							$(ffmpeg -i $sub $searchPath$movie".vtt" 2> /dev/null ) #converts srt to vtt
-							sub=$tempPath$movie".vtt" 
-						fi
+				if $createMsubs; then
+					tempPath=$(dirname $file)
+					tempPath="../"$tempPath"/"
+					sub=($(find $tempPath -name "*.srt"))
+					if [ "${#sub[@]}" -ge 1 ]; then
+						subStr=''; 
 					fi
+					counter=0;
+					for tempSub in "${sub[@]}"; do
+						if  [ $counter -ge 1 ]; then
+							subStr+=","
+						fi
+						tempSubNoExt="${tempSub%.*}"
+						if [[ -f $tempSubNoExt".vtt" ]]; then
+							lang="${tempSubNoExt##*_}"
+							if [ $lang == $tempSubNoExt ]; then
+								lang="en";
+							fi
+							tempSub=$tempSubNoExt".vtt"
+							tempSub=${tempSub#../}
+							subStr+='{"subFile":"'"${tempSub}"'", "lang":"'"${lang}"'","label":"'"${lang}"'"}'
+						else
+							if [[ -f $tempSub ]]; then
+								$(ffmpeg -i $tempSub $tempSubNoExt".vtt" 2> /dev/null )
+								lang="${tempSubNoExt##*_}"
+								if [ $lang == $tempSubNoExt ]; then
+									lang="en";
+								fi
+								tempSub=$tempSubNoExt".vtt"
+								tempSub=${tempSub#../}
+								subStr+='{"subFile":"'"${tempSub}"'", "lang":"'"${lang}"'","label":"'"${lang}"'"}'
+							fi
+						fi
+						((counter++))
+					done
 				fi
 			fi
 			movie=${movie//./ }
-			jq -r ". |= . + [{\"Movie\":\"${movie}\",\"ID\":\"${myID}\",\"Poster\":\"${myPoster}\",\"File\":\"${file}\",\"Subs\":[{\"subFile\":\"${sub}\", \"lang\":\"en\", \"label\":\"English\"}]}]" $dbNameMovie | sponge $dbNameMovie;
+			jq -r ". |= . + [{\"Movie\":\"${movie}\",\"ID\":\"${myID}\",\"Poster\":\"${myPoster}\",\"File\":\"${file}\",\"Subs\":[${subStr}]}]" $dbNameMovie | sponge $dbNameMovie;
 		fi
 	else
 		myPoster="";
+		subStr='"Subs":[{"subFile":"", "lang":"en","label":"English"}'
 		if $fetchMmetadata; then
 			if [[ $movie == *"Departures"* ]]; then
 				myID="1069238";
@@ -81,20 +105,42 @@ if [[ "${filename}" =~ ${regexM} ]]; then #if filename matches regex then it's a
 			if $createMsubs; then
 				tempPath=$(dirname $file)
 				tempPath="../"$tempPath"/"
-				sub=""
-				if [[ -f $tempPath$movie".vtt" ]]; then
-					sub=$tempPath$movie".vtt"
-				else
-					sub=$(find $tempPath -name "*.srt")
-					if [[ -f $sub ]]; then
-						$(ffmpeg -i $sub $tempPath$movie".vtt" 2> /dev/null )
-						sub=$tempPath$movie".vtt"
-					fi
+				sub=($(find $tempPath -name "*.srt"))
+				if [ "${#sub[@]}" -ge 1 ]; then
+					subStr='"Subs":['; 
 				fi
+				counter=0;
+				for tempSub in "${sub[@]}"; do
+					if  [ $counter -ge 1 ]; then
+						subStr+=","
+					fi
+					tempSubNoExt="${tempSub%.*}"
+					if [[ -f $tempSubNoExt".vtt" ]]; then
+						lang="${tempSubNoExt##*_}"
+						if [ $lang == $tempSubNoExt ]; then
+							lang="en";
+						fi
+						tempSub=$tempSubNoExt".vtt"
+						tempSub=${tempSub#../}
+						subStr+='{"subFile":"'"${tempSub}"'", "lang":"'"${lang}"'","label":"'"${lang}"'"}'
+					else
+						if [[ -f $tempSub ]]; then
+							$(ffmpeg -i $tempSub $tempSubNoExt".vtt" 2> /dev/null )
+							lang="${tempSubNoExt##*_}"
+							if [ $lang == $tempSubNoExt ]; then
+								lang="en";
+							fi
+							tempSub=$tempSubNoExt".vtt"
+							tempSub=${tempSub#../}
+							subStr+='{"subFile":"'"${tempSub}"'", "lang":"'"${lang}"'","label":"'"${lang}"'"}'
+						fi
+					fi
+					((counter++))
+				done
 			fi
 		fi
 		movie=${movie//./ }
-		printf '[{"Movie":"%s", "ID":"%s", "Poster":"%s", "File":"%s", "Subs":[{"subFile":"%s", "lang":"en","label":"English"}]}]\n' "${movie}" "${myID}" "${myPoster}" "${file}" "${sub}"  > $dbNameMovie;
+		echo -e '[{"Movie":"'"${movie}"'", "ID":"'"${myID}"'", "Poster":"'"${myPoster}"'", "File":"'"${file}"'",'"${subStr}"']}]\n' > $dbNameMovie;
 	fi
 else	#regex had no matches
 	echo -n "Unparsable "

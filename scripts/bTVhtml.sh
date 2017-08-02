@@ -18,7 +18,7 @@ myID=1
 pidArray=() 
 tmpFileArray=()
 IFS=$'\n' 
-for i in $(jq -r '.[].Show' $dbNameTV); do #| while read i; do #sets i to to the value of "Show", loops through every show in the database
+for i in $(jq -r '.[].Show' $dbNameTV); do #sets i to to the value of "Show", loops through every show in the database
     tmpfile=$(mktemp)
     ./bTVShow.sh $myID $i > $tmpfile &
     pidArray+=($!)

@@ -14,6 +14,7 @@ myID=1
 jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Movie", loops through every movie in the database
 	myImg=$(jq -r "map(select(.Movie | contains(\"${i}\")) .Poster) | .[]" $dbNameMovie)
 	if [ $myImg = "null"  ]; then
+                echo "Please note, \"""${i}""\" does NOT have a poster!";
 		myImg=""
 	fi
 	myFile=$(jq -r "map(select(.Movie | contains(\"${i}\")) .File) | .[]" $dbNameMovie)
@@ -27,7 +28,7 @@ jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Mo
 		tempIndex=0;
 		while [ $tempIndex -lt $mySubNum ]; do
 			myLang=($(jq -r "map(select(.Movie | contains(\"${i}\")) .Subs[${tempIndex}].lang) | .[]" $dbNameMovie))
-			myLabel=($(jq -r "map(select(.Movie | contains(\"${i}\")) .Subs[${tempIndex}].label) | .[]" $dbNameMovie))
+			myLabel=($(jq -r "map(select(.Movie | contains(\"${i}\")) .Subs[${tempIndex}].lang) | .[]" $dbNameMovie))
 			tempHtml+="\n<track src='' kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\">"
 			tempHtmlStr+=${mySub[${tempIndex}]}"," #path to the sub, to be fed to JS function that loads it in if needed
 			((tempIndex++))

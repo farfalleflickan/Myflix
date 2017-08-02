@@ -10,13 +10,17 @@ i=${2}
 myAlt=$(echo ${i} | sed "s/'//g") #strips single quotes from the Show string
 myAlt=$(echo ${myAlt} | sed "s/\"//g") #strips double guotes from the Show string
 myImg=$(jq -r "map(select(.Show | contains(\"${i}\")) .Poster) | .[]" $dbNameTV)
+if [ $myImg = "null"  ]; then
+        echo "Please note, \"""${i}""\" does NOT have a poster!";
+        myImg=""
+fi
 htmlStr+="<div class=\"showDiv\">\n<input id=\"A${myID}\" class=\"myBtn\" onclick=\"javascript:showModal(this)\" type=\"image\" src=\"${myImg}\" onload=\"javascript:setAlt(this, '${myAlt}')\">"
 htmlStr+="\n<div id=\"B${myID}\" class=\"modal\">\n<div class=\"modal-content\">"
 numSeasons=$(jq -r "map(select(.Show | contains(\"${i}\")) .Seasons) | .[]" $dbNameTV) 
 myEpisodes=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[].File) | .[]" $dbNameTV)) #creates an array with all the filepaths for all the episodes
 numEpisodes=${#myEpisodes[@]} #gets array size
 htmlStr+="\n<span onclick=\"javascript:hideModal()\" class=\"close\">&times;</span>\n<select id=\"selector${myID}_\" onchange=\"javascript:changeSeason(this)\" class=\"showSelect\">"
-seasonNum=0   
+seasonNum=0
 while [[ $seasonNum -lt $numSeasons ]]; do #adds a option for every season of the tv show
     ((seasonNum++))
     htmlStr+="\n<option value=\"${seasonNum}\">Season $seasonNum</option>" #Season select options
@@ -24,7 +28,7 @@ done
 seasonNum=1 #number of current season being worked on
 htmlStr+="\n</select>\n<ul id=\"C${myID}_${seasonNum}\" class=\"showEpUl\">"
 epNum=0 #start of Episodes object array in json database
-realEpNum=1 #actual episode number, 
+realEpNum=1 #actual episode number
 while [[ $epNum -le $numEpisodes ]] && [[ $seasonNum -le $numSeasons ]]; do
     episode=$(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].File) | .[]" $dbNameTV)
     if [[ $episode == *"Season."$seasonNum* ]] || [[ $episode == *"S0"$seasonNum* ]] || [[ $episode == *"S"$seasonNum* ]]; then #if the episode file path contains the current season
@@ -63,8 +67,6 @@ while [[ $epNum -le $numEpisodes ]] && [[ $seasonNum -le $numSeasons ]]; do
         htmlStr+="\n</ul>\n<ul id=\"C${myID}_${seasonNum}\" class=\"showEpUl\">"
         realEpNum=1
     fi
-    #echo -e $htmlStr >> $TVhtml # appends the html created in the loop to the total html
-    #htmlStr=""
 done
 htmlStr+="\n</ul>\n</div>\n</div>\n</div>"
 echo -e $htmlStr
