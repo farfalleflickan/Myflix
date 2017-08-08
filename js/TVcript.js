@@ -118,9 +118,13 @@ function setAlt(elem, altStr) {
 
 function resetPlayer(){
     var myTime = player.currentTime;
+	var mySrc = player.children[0].src;
+	player.children[0].src="";
     player.load();
+	player.children[0].src=mySrc;
     player.currentTime = myTime;
-    player.play;
+	player.load();
+    player.play();
 }
 
 function prevEp() {
