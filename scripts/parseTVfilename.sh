@@ -30,6 +30,15 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
 			myTitle=""
 			sub=""
 			subStr='{"subFile":"", "lang":"en","label":"English"}'
+                        tvShowSeason=$(jq -r "map(select(.Show == \"${myShow}\") | .Seasons) | .[]" $dbNameTV)
+                        if [ "$mySeason" -gt "$tvShowSeason" ]; then
+                            tmpfile=$(mktemp)
+                            tempIndex=$(jq -r "index(map(select(.Show == \"${myShow}\")))" $dbNameTV)
+                            toAdd=$(jq -r ".[$tempIndex].Seasons = \"${mySeason}\"" $dbNameTV)
+                            echo -en $toAdd"\n" >> $tmpfile;
+                            cp $tmpfile $dbNameTV;
+                            rm $tmpfile
+                        fi
 			if $fetchTVmetadata; then
 				if [[ ! -z "$TMDBapi" ]] && $getEpisodeName; then
 					myID=$(jq -r "map((select(.Show == \"${myShow}\") | .ID)) | .[]" $dbNameTV)
