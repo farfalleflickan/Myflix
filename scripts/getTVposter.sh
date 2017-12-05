@@ -58,4 +58,3 @@ if [[ ! -z $TMDBapi ]]; then
 else
 	echo "null"
 fi
-�
