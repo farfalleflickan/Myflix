@@ -10,7 +10,7 @@ i=${2}
 myAlt=$(echo ${i} | sed "s/'//g") #strips single quotes from the Show string
 myAlt=$(echo ${myAlt} | sed "s/\"//g") #strips double guotes from the Show string
 myImg=$(jq -r "map(select(.Show | contains(\"${i}\")) .Poster) | .[]" $dbNameTV)
-if [ $myImg = "null"  ]; then
+if [[ $myImg != *".jpg"*  ]]; then
         echo "Please note, \"""${i}""\" does NOT have a poster!";
         myImg=""
 fi
