@@ -20,7 +20,7 @@ if [[ ! -z "$TMDBapi" ]]; then
 	output=$(curl -s --request GET --url $myUrl --data '{}' | jq -r 'if has("posters") then .posters | map(select((.width | contains(1000)) and (.height | contains(1500))) | .file_path) else "null" end' | head -n1)
 	if [[ $output == *".jpg"* ]]; then
 		output="https://image.tmdb.org/t/p/original"$output;
-	elif [[$output == "null"]]; then
+	elif [[ $output == "null" ]]; then
 		echo "null; wrong ID or no posters"
 		exit;
 	else
