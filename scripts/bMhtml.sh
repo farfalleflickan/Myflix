@@ -13,8 +13,8 @@ printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"
 myID=1
 jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Movie", loops through every movie in the database
 	myImg=$(jq -r "map(select(.Movie | contains(\"${i}\")) .Poster) | .[]" $dbNameMovie)
-	if [ $myImg = "null"  ]; then
-                echo "Please note, \"""${i}""\" does NOT have a poster!";
+	if [[ $myImg != *".jpg"*  ]]; then
+		echo "Please note, \"""${i}""\" does NOT have a poster!";
 		myImg=""
 	fi
 	myFile=$(jq -r "map(select(.Movie | contains(\"${i}\")) .File) | .[]" $dbNameMovie)
