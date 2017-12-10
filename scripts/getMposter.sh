@@ -17,8 +17,9 @@ compressImgMo=false
 id=${1};
 if [[ ! -z "$TMDBapi" ]]; then
 	myUrl="https://api.themoviedb.org/3/movie/tt"${id}"/images?include_image_language=en&api_key="$TMDBapi
-	output=$(curl -s --request GET --url $myUrl --data '{}' | jq -r 'if has("posters") then .posters | map(select((.width | contains(1000)) and (.height | contains(1500))) | .file_path) else "null" end' | head -n1)
+	output=$(curl -s --request GET --url $myUrl --data '{}' | jq -r 'if has("posters") then .posters | map(select((.width | contains(1000)) and (.height | contains(1500))) | .file_path) else "null" end')
 	if [[ $output == *".jpg"* ]]; then
+		output=$( echo $output | jq -r '.[0]')
 		output="https://image.tmdb.org/t/p/original"$output;
 	elif [[ $output == "null" ]]; then
 		echo "null; wrong ID or no posters"
