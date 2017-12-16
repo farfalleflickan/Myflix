@@ -4,6 +4,8 @@
 Myflix tries to be a somewhat simple and lightweight "DIY Netflix", similar to Plex, streama or Emby, for your DIY NAS, especially aimed at the Raspberry Pi/Odroid/etc ecosystem. It's not **meant** or **designed** to be fancy (if you have the hardware and want a ton of functionality, go for other solutions :) ), but the bare minimum to be somewhat pretty, fast and usable. The scripts create json databases that store the files location and metadata, these databases are then used to create static web pages that can be served from any web server!    
  I still have some commenting to do, I swear I will do it when I have time...
 
+If you want to password protect your myflix files, you might want to look at ![this](https://github.com/pastapojken/JSONlogin)!
+
 # Sreenshots:  
 TV shows page  
 ![TV shows](https://github.com/pastapojken/Myflix/blob/screenshots/ec53e53f252f908bc8bac7f8c4486790.jpg)   
