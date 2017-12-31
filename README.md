@@ -31,7 +31,8 @@ Download all the files, look around in buildDBs.cgi and config.cfg, set the path
 Pray to a deity of your choice!~~
 
 Requirements:
-jq, imagemagick, ffmpeg and a TMDB api key. See the wiki for a tutorial and more detailed information on the scripts.
+
+jq, imagemagick, ffmpeg, xmllint and a TMDB api key. See the wiki for a tutorial and more detailed information on the scripts.
 
 Features :
 * uses BASH for everything... at least so far!
