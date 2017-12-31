@@ -2,6 +2,7 @@
 
 cd "$(dirname "$0")"
 dbNameTV="../dbTV.json"
+TVpath=../TV/;
 . config.cfg
 
 if ! grep -q "<episodedetails>" $1; then # $1 is NOT a episode file, but a tv show file...

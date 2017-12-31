@@ -1,13 +1,15 @@
 #! /bin/bash
 
-cd "$(dirname "$0")"
 if [ "$#" -ne 1 ]; then
 	echo "$0": usage: parseMnfo.sh /path/to/file.nfo
 	exit 1
 fi
 
+cd "$(dirname "$0")"
 dbNameMovie="../dbM.json"
+MoviesPath=../Movies/;
 . config.cfg
+
 
 movie=$(xmllint --xpath "string(//title)" $1);
 myID=$(xmllint --xpath "string(//id)" $1);
