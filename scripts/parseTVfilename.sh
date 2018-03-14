@@ -55,7 +55,7 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
 					subName=${show#../} #removes ../
 					subName=$(basename "$subName")
 					tempPath=$(dirname $1)
-					tempPath=$tempPath"/"
+					tempPath=$tempPath"/";
 					sub=($(find $tempPath -name $subName"*.srt"))
 					if [ "${#sub[@]}" -ge 1 ]; then
 						subStr=''; 
