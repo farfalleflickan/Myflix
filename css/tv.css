@@ -43,6 +43,13 @@ body {
     text-decoration: none;
     cursor: pointer;
 } 
+
+#epTitle{
+	text-align: center;
+}
+
+
+
 .showDiv{
     float: left;
     margin: 5px;
