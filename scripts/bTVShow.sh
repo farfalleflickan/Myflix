@@ -45,9 +45,13 @@ while [[ $epNum -le $numEpisodes ]] && [[ $seasonNum -le $numSeasons ]]; do
             while [ $tempIndex -lt $mySubNum ]; do #loops through the available subtitles
                 myLang=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[${tempIndex}].lang) | .[]" $dbNameTV))
                 myLabel=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[${tempIndex}].label) | .[]" $dbNameTV))
-                subsStr+="\n<track src='' kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\">"
+				if [ $tempIndex -eq 0 ]; then
+	               	subsStr+="\n<track src='' kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\" default>"
+				else
+                	subsStr+="\n<track src='' kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\">"
+				fi
                 tempSub=${mySub[${tempIndex}]} #gets subtitle path 
-                tempSub=$(sed s/\'/"\\\'"/ <<< $tempSub) #escpaes single quotes, so ' becomes \' and doesn't mess up the html
+                tempSub=$(sed s/\'/"\\\'"/ <<< $tempSub) 	#escpaes single quotes, so ' becomes \' and doesn't mess up the html
                 tempHtmlStr+=${tempSub}"," #path to the sub, to be fed to JS function that loads it in if needed
                 ((tempIndex++))
             done

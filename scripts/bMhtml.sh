@@ -5,7 +5,7 @@ dbNameMovie="../dbM.json"
 Mhtml=../Movies.html
 . config.cfg
 
-printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"UTF-8\">\n<meta name=\"description\" content=\"Dario Rostirolla\">\n<meta name=\"keywords\" content=\"HTML, CSS\">\n<meta name=\"author\" content=\"Dario Rostirolla\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link href=\"css/movie.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.png\">\n</head>\n<body>\n<script async type=\"text/javascript\" src=\"js/Mcript.js\"></script><div id=\"wrapper\">" > $Mhtml
+printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"UTF-8\">\n<meta name=\"description\" content=\"Dario Rostirolla\">\n<meta name=\"keywords\" content=\"HTML, CSS\">\n<meta name=\"author\" content=\"Dario Rostirolla\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link href=\"css/movie.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.png\">\n</head>\n<body>\n<script async type=\"text/javascript\" src=\"js/Mcript.js\"></script><div id=\"wrapper\">" > $Mhtml 
 #html specific id given to elements 
 # A+myID identifies the movie's "input button"
 # B+myID identifies the movie's modal
@@ -27,9 +27,13 @@ jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Mo
 	if [ $mySubNum -ge 1 ]; then
 		tempIndex=0;
 		while [ $tempIndex -lt $mySubNum ]; do
-			myLang=($(jq -r "map(select(.Movie | contains(\"${i}\")) .Subs[${tempIndex}].lang) | .[]" $dbNameMovie))
-			myLabel=($(jq -r "map(select(.Movie | contains(\"${i}\")) .Subs[${tempIndex}].lang) | .[]" $dbNameMovie))
-			tempHtml+="\n<track src='' kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\">"
+			myLang=($(jq -r "map(select(.Movie | contains(\"${i}\")) .Subs[${tempIndex}].lang) | .[]" $dbNameMovie));
+			myLabel=($(jq -r "map(select(.Movie | contains(\"${i}\")) .Subs[${tempIndex}].lang) | .[]" $dbNameMovie));
+			if [ $tempIndex -eq 0 ]; then
+            	tempHtml+="\n<track src='' kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\" default>";
+            else
+            	tempHtml+="\n<track src='' kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\">";
+            fi
 			tempHtmlStr+=${mySub[${tempIndex}]}"," #path to the sub, to be fed to JS function that loads it in if needed
 			((tempIndex++))
 		done
