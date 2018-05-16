@@ -51,17 +51,11 @@ body {
 
 
 .showDiv{
-    float: left;
-    margin: 5px;
-    display: table;
+	margin: 5px;
 }
 
 .myBtn {
     width: 19vw;
-    position: relative;
-    float: left;
-    overflow: hidden;
-    display: none;
 }
 
 .myBtn:hover {
@@ -123,5 +117,13 @@ body {
 }
 
 #wrapper {
-    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+
+#paddingDiv {
+	content: "";
+	width: 0px;
+	height: 0px;
 }

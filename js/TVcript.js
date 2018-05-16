@@ -158,6 +158,7 @@ function nextEp() {
     if (document.getElementById(tempStr) !== null) {
         videoModal.style.display = "none";
         videoModal = document.getElementById(tempStr);
+        oldVolume = player.volume;
         player.pause();
         player = "";
         videoModal.style.display = "block";
@@ -181,6 +182,7 @@ function nextEp() {
                 document.msExitFullscreen();
             }
         }
+        player.volume = oldVolume;
         player.play();
     }
 }
@@ -224,3 +226,31 @@ window.onclick = function (event) {
         player = "";
     }
 };
+
+function setPadding(){
+	document.getElementById("paddingDiv").style.display="block";
+	var wrapper = document.getElementById("wrapper");
+    var wDiv = wrapper.offsetWidth;
+    var tempArr = document.getElementsByClassName("showDiv");
+    var temp1 = tempArr[0];
+	var temp2 = tempArr[1];
+    var style = getComputedStyle(temp1);
+	var extraSpace = Math.abs(parseFloat((temp1.offsetLeft + temp1.getBoundingClientRect().width)-temp2.offsetLeft));
+    var sDiv = parseFloat(temp1.getBoundingClientRect().width);
+	var currentElHeight=parseInt(style.marginTop)+temp1.offsetHeight;
+    var rate = Math.floor(wDiv/(sDiv+(extraSpace/2)));
+	var numbEl = (wrapper.childElementCount-1)%rate;
+	var realRate = Math.floor(rate-numbEl);
+	var extraElementW=sDiv*realRate+extraSpace*(realRate-1)+parseFloat(style.marginLeft);
+	if (numbEl <= 0){
+        extraElementW=0;
+        currentElHeight=0;
+		document.getElementById("paddingDiv").style.display="none";
+    } else {
+		document.getElementById("paddingDiv").style.width=extraElementW.toString()+"px";
+		document.getElementById("paddingDiv").style.height=currentElHeight.toString()+"px";
+	}
+}
+
+window.onload=setPadding;
+window.onresize=setPadding;

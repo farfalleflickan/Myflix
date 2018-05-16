@@ -43,17 +43,11 @@ body {
     cursor: pointer;
 } 
 .movieDiv{
-    float: left;
     margin: 5px;
-    display: table;
 }
 
 .myBtn {
     width: 18vw;
-    position: relative;
-    float: left;
-    overflow: hidden;
-    display: none;
 }
 
 .myBtn:hover {
@@ -73,6 +67,16 @@ body {
 }
 
 #wrapper {
-    margin: 0 auto;
-    padding-left: 3vw;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
 }
+
+#paddingDiv {
+    content: "";
+    width: 0px;
+    height: 0px;
+}
+
+
+

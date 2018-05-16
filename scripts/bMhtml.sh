@@ -49,5 +49,5 @@ jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Mo
 	htmlStr=""
 	((myID++))
 done
-echo -e '\n</div>\n</body>\n</html>' >> $Mhtml
+echo -e '\n<div id="paddingDiv">\n</div>\n</div>\n</body>\n</html>' >> $Mhtml
 chmod 755 $Mhtml

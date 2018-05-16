@@ -33,5 +33,5 @@ while [ $tempIndex -lt $numThreads ]; do
     rm "${tmpFileArray[${tempIndex}]}"
     ((tempIndex++))
 done
-echo -e '\n</div>\n</body>\n</html>' >> $TVhtml
+echo -e '\n<div id="paddingDiv">\n</div>\n</div>\n</body>\n</html>' >> $TVhtml
 chmod 755 $TVhtml
