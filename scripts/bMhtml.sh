@@ -12,13 +12,13 @@ printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"
 # C+myID identifies the movie's video player
 myID=1
 jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Movie", loops through every movie in the database
-	myImg=$(jq -r "map(select(.Movie | contains(\"${i}\")) .Poster) | .[]" $dbNameMovie)
+	myImg=$(jq -r "map(select(.Movie==\"${i}\") .Poster) | .[]" $dbNameMovie)
 	if [[ $myImg != *".jpg"*  ]]; then
 		echo "Please note, \"""${i}""\" does NOT have a poster!";
 		myImg=""
 	fi
-	myFile=$(jq -r "map(select(.Movie | contains(\"${i}\")) .File) | .[]" $dbNameMovie)
-	mySub=($(jq -r "map(select(.Movie | contains(\"${i}\")) .Subs[].subFile) | .[]" $dbNameMovie))
+	myFile=$(jq -r "map(select(.Movie==\"${i}\") .File) | .[]" $dbNameMovie)
+	mySub=($(jq -r "map(select(.Movie==\"${i}\") .Subs[].subFile) | .[]" $dbNameMovie))
 	mySubNum=${#mySub[@]}
 	myAlt=$(echo ${i} | sed "s/'//")
 	htmlStr="<div class=\"movieDiv\">\n"
@@ -27,8 +27,8 @@ jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Mo
 	if [ $mySubNum -ge 1 ]; then
 		tempIndex=0;
 		while [ $tempIndex -lt $mySubNum ]; do
-			myLang=($(jq -r "map(select(.Movie | contains(\"${i}\")) .Subs[${tempIndex}].lang) | .[]" $dbNameMovie));
-			myLabel=($(jq -r "map(select(.Movie | contains(\"${i}\")) .Subs[${tempIndex}].lang) | .[]" $dbNameMovie));
+			myLang=($(jq -r "map(select(.Movie==\"${i}\") .Subs[${tempIndex}].lang) | .[]" $dbNameMovie));
+			myLabel=($(jq -r "map(select(.Movie==\"${i}\") .Subs[${tempIndex}].lang) | .[]" $dbNameMovie));
 			if [ $tempIndex -eq 0 ]; then
             	tempHtml+="\n<track src='' kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\" default>";
             else
