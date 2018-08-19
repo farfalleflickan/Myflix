@@ -155,15 +155,12 @@ function nextEp() {
     var currentNum = parseInt(videoModal.id.substr(index + 1));
     currentNum += 1;
     var tempStr = String(myID) + String(currentNum);
+	tempStr = tempStr.replace("E", "D");
+	var btnElem = document.getElementById(tempStr);
+	oldVolume = player.volume;
     if (document.getElementById(tempStr) !== null) {
-        videoModal.style.display = "none";
-        videoModal = document.getElementById(tempStr);
-        oldVolume = player.volume;
-        player.pause();
-        player = "";
-        videoModal.style.display = "block";
-        tempStr = tempStr.replace("E", "F");
-        player = document.getElementById(String(tempStr));
+		hideVideoModal();
+		btnElem.click();
         if (isDescendant(ulElement, videoModal) === false) {
             selElement.selectedIndex = parseInt(parseInt(selElement.value));
             changeSeason(selElement);
