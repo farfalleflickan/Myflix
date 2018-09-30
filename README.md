@@ -8,20 +8,20 @@ If you want to password protect your myflix files, you might want to look at ![t
 
 # Sreenshots:  
 TV shows page  
-![TV shows](https://github.com/pastapojken/Myflix/blob/screenshots/ec53e53f252f908bc8bac7f8c4486790.jpg)   
+![TV shows](https://github.com/pastapojken/Myflix/blob/master/screenshots/ec53e53f252f908bc8bac7f8c4486790.jpg)   
 
 TV show season/episode modal
-![TV show episodes](https://github.com/pastapojken/Myflix/blob/screenshots/fb31129a22d81b732ce88f02cae27fea.jpg)  
+![TV show episodes](https://github.com/pastapojken/Myflix/blob/master/screenshots/fb31129a22d81b732ce88f02cae27fea.jpg)  
 
 
 TV show episode player
-![TV show episode player](https://github.com/pastapojken/Myflix/blob/screenshots/102b3df4924efeae7476d6ceee79bec9.png)
+![TV show episode player](https://github.com/pastapojken/Myflix/blob/master/screenshots/102b3df4924efeae7476d6ceee79bec9.png)
 
 Movies page
-![Movies](https://github.com/pastapojken/Myflix/blob/screenshots/d4271907a9af78d8dd84f3941ca1e56a.jpg)  
+![Movies](https://github.com/pastapojken/Myflix/blob/master/screenshots/d4271907a9af78d8dd84f3941ca1e56a.jpg)  
 
 Movies player
-![Movies player](https://github.com/pastapojken/Myflix/blob/screenshots/2eb41c935d1c11e19adb66466bcdf97e.png)
+![Movies player](https://github.com/pastapojken/Myflix/blob/master/screenshots/2eb41c935d1c11e19adb66466bcdf97e.png)
 
 
 ~~**Shitty temporary tutorial:**~~
