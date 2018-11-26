@@ -15,11 +15,11 @@ case "${1}" in #switch case for the program's argument
 		cat $dbNameMovie | jq 'sort_by(.Movie)' -r | sponge $dbNameMovie;
         ;;
     "2")
-		cat $dbNameMovie | jq 'sort_by(.Show)' -r | sponge $dbNameMovie;
+		cat $dbNameTV | jq 'sort_by(.Show)' -r | sponge $dbNameTV;
         ;;
     "3")
 		cat $dbNameMovie | jq 'sort_by(.Movie)' -r | sponge $dbNameMovie;
-		cat $dbNameMovie | jq 'sort_by(.Show)' -r | sponge $dbNameTV;
+		cat $dbNameTV | jq 'sort_by(.Show)' -r | sponge $dbNameTV;
         ;;
     *)
         echo "Invalid input, use: #1 for only movies, #2 for only tv shows and #3 for both";;
