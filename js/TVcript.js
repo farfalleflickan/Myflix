@@ -11,6 +11,8 @@ document.addEventListener("webkitfullscreenchange", FShandler);
 document.addEventListener("mozfullscreenchange", FShandler);
 document.addEventListener("MSFullscreenChange", FShandler);
 document.addEventListener("keydown", function (e) {
+	e.preventDefault();
+	e.stopPropagation();
     if (e.keyCode === 70) {
         if (isFullscreen % 2 === 0) {
             if (document.exitFullscreen) {
@@ -34,9 +36,9 @@ document.addEventListener("keydown", function (e) {
             }
         }
     } else if (e.keyCode === 37) {
-        player.currentTime -= 15;
+        player.currentTime -= 5;
     } else if (e.keyCode === 39) {
-        player.currentTime += 15;
+        player.currentTime += 5;
     } else if (e.keyCode === 32) {
         if(player.paused){
         	player.play();
