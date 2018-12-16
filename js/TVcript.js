@@ -11,10 +11,10 @@ document.addEventListener("webkitfullscreenchange", FShandler);
 document.addEventListener("mozfullscreenchange", FShandler);
 document.addEventListener("MSFullscreenChange", FShandler);
 document.addEventListener("keydown", function (e) {
+if (e.keyCode === 70) {
 	e.preventDefault();
 	e.stopPropagation();
-    if (e.keyCode === 70) {
-        if (isFullscreen % 2 === 0) {
+	if (isFullscreen % 2 === 0) {
             if (document.exitFullscreen) {
                 document.exitFullscreen();
             } else if (document.webkitExitFullscreen) {
@@ -36,10 +36,16 @@ document.addEventListener("keydown", function (e) {
             }
         }
     } else if (e.keyCode === 37) {
+	e.preventDefault();
+	e.stopPropagation();
         player.currentTime -= 5;
     } else if (e.keyCode === 39) {
+	e.preventDefault();
+	e.stopPropagation();
         player.currentTime += 5;
     } else if (e.keyCode === 32) {
+	e.preventDefault();
+	e.stopPropagation();
         if(player.paused){
         	player.play();
     	} else {
