@@ -3,7 +3,14 @@
 cd "$(dirname "$0")"
 dbNameMovie="../dbM.json"
 Mhtml=../Movies.html
+dMoImg=false
+dMoFolder=../MoImg/
+imgResizeMo="-resize 500x"
+tinyPNGapi=""
+compressImgMo=false
 . config.cfg
+imgResizeMo="-resize 500x1500^"
+
 
 printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"UTF-8\">\n<meta name=\"description\" content=\"Dario Rostirolla\">\n<meta name=\"keywords\" content=\"HTML, CSS\">\n<meta name=\"author\" content=\"Dario Rostirolla\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link href=\"css/movie.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.png\">\n</head>\n<body>\n<script async type=\"text/javascript\" src=\"js/Mcript.js\"></script><div id=\"wrapper\">" > $Mhtml 
 #html specific id given to elements 
@@ -14,8 +21,38 @@ myID=1
 jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Movie", loops through every movie in the database
 	myImg=$(jq -r "map(select(.Movie==\"${i}\") .Poster) | .[]" $dbNameMovie)
 	if [[ $myImg != *".jpg"*  ]]; then
-		echo "Please note, \"""${i}""\" does NOT have a poster!";
+		echo -e "Please note, \"""${i}""\" does NOT have a poster!\nGenerating one...";
 		myImg=""
+
+		output="rangen_"$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)".jpg"
+		currentFile=$(jq -r "map(select(.Movie==\"${i}\") .File) | .[]" $dbNameMovie)
+		movieFile="../"$currentFile
+		
+		if [ ! -d "$dMoFolder" ]; then
+				mkdir $dMoFolder
+		fi
+
+		durationTime=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 $movieFile)
+		durationTime=${durationTime%.*}
+		halfTime=$((durationTime/2))
+		
+		$(ffmpeg -ss $halfTime -i $movieFile -vframes 1 -q:v 3 $dMoFolder$output 2> /dev/null);
+		
+		if [ ! -z "$AutogenImgResizeMo" ]; then
+				convert $AutogenImgResizeMo $dMoFolder$output $dMoFolder$output
+		fi
+		if $compressImgMo; then
+				convert -strip -interlace Plane -gaussian-blur 0.05 -quality 90% $dMoFolder$output $dMoFolder$output
+		fi
+		if [[ ! -z "$tinyPNGapi" ]]; then
+			imgUrl=$(curl -s --user api:$tinyPNGapi  --data-binary @$dMoFolder$output https://api.tinify.com/shrink | jq -r '.output.url')
+			curl -s --user api:$tinyPNGapi --output $dMoFolder$output $imgUrl
+		fi
+		chmod 755 -R $dMoFolder
+		tempFolder=$(basename $dMoFolder)
+		myImg=$tempFolder"/"$output;
+		$(./fixFile.sh $currentFile $myID myImg);		
+		
 	fi
 	myFile=$(jq -r "map(select(.Movie==\"${i}\") .File) | .[]" $dbNameMovie)
 	mySub=($(jq -r "map(select(.Movie==\"${i}\") .Subs[].subFile) | .[]" $dbNameMovie))

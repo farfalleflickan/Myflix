@@ -16,8 +16,10 @@ filename=$1
 newID=$2
 newImg=$3
 
+
 if  [[ -s $dbNameMovie ]] || [[ -s $dbNameTV ]]; then #checks if database is NOT empty
-    if grep -q ${filename} $dbNameMovie; then
+	if [[ -s $dbNameMovie ]]; then
+		if grep -q ${filename} $dbNameMovie ]; then
             tmpfile=$(mktemp)
             myNum=$(jq -r "index(map(select(.File==\"${filename}\")))" $dbNameMovie);
             if [ -z "$newID" ]; then
@@ -30,7 +32,9 @@ if  [[ -s $dbNameMovie ]] || [[ -s $dbNameTV ]]; then #checks if database is NOT
             echo -en $toAdd"\n" >> $tmpfile;
             cp $tmpfile $dbNameMovie;
             rm $tmpfile
-	elif grep -q ${filename} $dbNameTV; then # if the movie is already in the database
+        fi
+	elif [[ -s $dbNameTV ]]; then 
+		if grep -q ${filename} $dbNameTV; then # if the movie is already in the database
             tmpfile=$(mktemp);
             myNum=$(jq -r ".[].Episodes | map(select(.File == \"${filename}\"))" $dbNameTV | jq -r 'index(select(. != null))' | grep -n '0' | cut -d : -f 1);
             myNum=$(($myNum-1));
@@ -44,8 +48,9 @@ if  [[ -s $dbNameMovie ]] || [[ -s $dbNameTV ]]; then #checks if database is NOT
             echo -en $toAdd"\n" >> $tmpfile;
             cp $tmpfile $dbNameTV;
             rm $tmpfile
+        fi
 	else
-            echo "\"""$1""\" not present in any DB"
+		echo "\"""$1""\" not present in any DB"
 	fi
 else
 	echo "DBs are empty/non existent"

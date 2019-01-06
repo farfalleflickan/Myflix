@@ -10,9 +10,22 @@ i=${2}
 myAlt=$(echo ${i} | sed "s/'//g") #strips single quotes from the Show string
 myAlt=$(echo ${myAlt} | sed "s/\"//g") #strips double guotes from the Show string
 myImg=$(jq -r "map(select(.Show | contains(\"${i}\")) .Poster) | .[]" $dbNameTV)
-if [[ $myImg != *".jpg"*  ]]; then
-        echo "Please note, \"""${i}""\" does NOT have a poster!";
-        myImg=""
+if [[ $myImg != *".jpg"*  ]]; then #if missing poster, generates one
+        myImg="";
+        
+        UUID="rangen_"$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)".jpg";
+        
+		if [ ! -d "$dTVFolder" ]; then #creates foldser if missing
+			mkdir $dTVFolder
+		fi
+		
+		$(convert $AutogenImgResizeTV -gravity center -weight 700 -pointsize 200 -annotate 0 "${2}" $dTVFolder$UUID);
+		chmod 755 -R $dTVFolder 
+		tempFolder=$(basename $dTVFolder)
+		myImg=$tempFolder"/"$UUID;
+        currentShow=$(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[0].File) | .[]" $dbNameTV)
+        currentShow="../"$currentShow;
+        $(./fixFile.sh $currentShow $myID $myImg);
 fi
 htmlStr+="<div class=\"showDiv\">\n<input id=\"A${myID}\" class=\"myBtn\" value=\"\" onclick=\"javascript:showModal(this)\" type=\"image\" src=\"${myImg}\" onload=\"javascript:setAlt(this, '${myAlt}')\">"
 htmlStr+="\n<div id=\"B${myID}\" class=\"modal\">\n<div class=\"modal-content\">"
