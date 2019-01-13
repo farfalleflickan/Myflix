@@ -51,7 +51,7 @@ jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Mo
 		chmod 755 -R $dMoFolder
 		tempFolder=$(basename $dMoFolder)
 		myImg=$tempFolder"/"$output;
-		$(./fixFile.sh $currentFile $myID myImg);		
+		$(./fixFile.sh $currentFile $myID $myImg);		
 		
 	fi
 	myFile=$(jq -r "map(select(.Movie==\"${i}\") .File) | .[]" $dbNameMovie)
