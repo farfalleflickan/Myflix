@@ -1,16 +1,48 @@
 #! /bin/bash
 
-# uses very rudimental grep to parse the html of the IMDB search page
 cd "$(dirname "$0")"
 if [ "$#" -ne 1 ]; then
 	echo "$0": usage: getMid.sh name.Of.Movie
 	exit 1
 fi
 
-movie=${1}
-movie=${movie//./+}
-output=$(curl -s "https://www.imdb.com/find?ref_=nv_sr_fn&q="${movie}"&s=all" | grep '<td class="result_text"> <a href="/title/' | head -n1 )
-output=${output#<tr class=\"findResult odd\"> <td class=\"primary_photo\"> <a href=\"/title/tt}
-output=${output%%/?ref*}
-echo $output #returns empty string if not found
+dMoImg=false
+dMoFolder=../MoImg/
+imgResizeMo="-resize 500x"
+tinyPNGapi=""
+TMDBapi=""
+compressImgMo=false
+. config.cfg
+
+if [[ ! -z "$TMDBapi" ]]; then
+	movie=${1}
+    movie=${movie//./%20}
+    myUrl="https://api.themoviedb.org/3/search/movie?api_key="$TMDBapi"&language=en-US&query="$movie"&page=1&include_adult=false"
+    tmdbID=$(curl -s --request GET --url $myUrl --data '{}' | jq -r 'if ."total_results">0 then .results[0].id else "null" end')
+
+	if [[ $tmdbID != "null" ]]; then
+		myUrl="https://api.themoviedb.org/3/movie/"$tmdbID"/external_ids?api_key="$TMDBapi
+	    output=$(curl -s --request GET --url $myUrl --data '{}' | jq -r 'if has("imdb_id") then .imdb_id else "null" end' |  sed 's/^.\{2\}//')
+		echo $output
+		exit;
+    else # uses very rudimental grep to parse the html of the IMDB search page
+	    output=""
+    	movie=${1}
+	    movie=${movie//./+}
+    	output=$(curl -s "https://www.imdb.com/find?ref_=nv_sr_fn&q="${movie}"&s=all" | grep '<td class="result_text"> <a href="/title/' | head -n1 )
+	    output=${output#<tr class=\"findResult odd\"> <td class=\"primary_photo\"> <a href=\"/title/tt}
+    	output=${output%%/?ref*}
+    	echo $output #returns empty string if not found
+		exit;
+	fi
+else # uses very rudimental grep to parse the html of the IMDB search page
+	output=""
+	movie=${1}
+	movie=${movie//./+}
+	output=$(curl -s "https://www.imdb.com/find?ref_=nv_sr_fn&q="${movie}"&s=all" | grep '<td class="result_text"> <a href="/title/' | head -n1 )
+	output=${output#<tr class=\"findResult odd\"> <td class=\"primary_photo\"> <a href=\"/title/tt}
+	output=${output%%/?ref*}
+	echo $output #returns empty string if not found
+	exit;
+fi
 
