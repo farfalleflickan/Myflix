@@ -36,16 +36,19 @@ if (e.keyCode === 70) {
             }
         }
     } else if (e.keyCode === 37) {
-	e.preventDefault();
-	e.stopPropagation();
+		e.preventDefault();
+		e.stopPropagation();
         player.currentTime -= 5;
     } else if (e.keyCode === 39) {
-	e.preventDefault();
-	e.stopPropagation();
+		e.preventDefault();
+		e.stopPropagation();
         player.currentTime += 5;
+		if (player.currentTime >= player.duration){
+			nextEp();
+		}
     } else if (e.keyCode === 32) {
-	e.preventDefault();
-	e.stopPropagation();
+		e.preventDefault();
+		e.stopPropagation();
         if(player.paused){
         	player.play();
     	} else {
