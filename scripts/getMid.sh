@@ -22,7 +22,20 @@ if [[ ! -z "$TMDBapi" ]]; then
 
 	if [[ $tmdbID != "null" ]]; then
 		myUrl="https://api.themoviedb.org/3/movie/"$tmdbID"/external_ids?api_key="$TMDBapi
-	    output=$(curl -s --request GET --url $myUrl --data '{}' | jq -r 'if has("imdb_id") then .imdb_id else "null" end' |  sed 's/^.\{2\}//')
+	    output=$(curl -s --request GET --url $myUrl --data '{}' | jq -r 'if has("imdb_id") then .imdb_id else "null" end')
+		if [[ $output != "null" ]]; then
+			output=$(echo $output | sed 's/^.\{2\}//')
+		else
+			myUrl="https://api.themoviedb.org/3/search/movie?api_key="$TMDBapi"&language=en-US&query="$movie"&page=1&include_adult=false"
+			tmdbID=$(curl -s --request GET --url $myUrl --data '{}' | jq -r 'if ."total_results">1 then .results[1].id else "null" end')
+			myUrl="https://api.themoviedb.org/3/movie/"$tmdbID"/external_ids?api_key="$TMDBapi
+			if [[ $tmdbID != "null" ]]; then
+				output=$(curl -s --request GET --url $myUrl --data '{}' | jq -r 'if has("imdb_id") then .imdb_id else "null" end')
+				if [[ $output != "null" ]]; then
+		            output=$(echo $output | sed 's/^.\{2\}//')
+				fi
+			fi
+		fi
 		echo $output
 		exit;
     else # uses very rudimental grep to parse the html of the IMDB search page
