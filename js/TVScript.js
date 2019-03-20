@@ -69,6 +69,7 @@ function rezHandler() {
     if (vidModalStatus===true){
         var tempHeight=videoModal.firstElementChild.offsetHeight+20;
         parent.frameDiv.style.height=String(tempHeight)+"px";
+		document.body.style.overflow="hidden";
     }
 }
 
@@ -110,7 +111,8 @@ function showVideoModal(elem) {
     videoModal.firstElementChild.style.cssText = "width: auto; height: auto; margin: 0; padding: 0; border: 0;";
     var tempHeight=(videoModal.firstElementChild.offsetHeight)+18;
     parent.frameDiv.style.height=String(tempHeight)+"px";
-    vidModalStatus=true;        
+    vidModalStatus=true;
+	document.body.style.overflow="hidden";
 }
 
 function showVideoModalsetSubs(elem, srcStr) {
@@ -123,7 +125,8 @@ function showVideoModalsetSubs(elem, srcStr) {
     videoModal.firstElementChild.style.cssText = "width: auto; height: auto; margin: 0; padding: 0; border: 0;";
     var tempHeight=(videoModal.firstElementChild.offsetHeight)+18;
     parent.frameDiv.style.height=String(tempHeight)+"px";
-    vidModalStatus=true;  
+    vidModalStatus=true;
+	document.body.style.overflow="hidden";
     var subNum = parseInt(player.childElementCount) - 1;
     var array = srcStr.split(',');
     for (var i = 1, j = 0; i <= subNum; i++, j++) {
@@ -139,6 +142,7 @@ function hideModal() {
 
 function hideVideoModal() {
     videoModal.style.display = "none";
+	document.body.style.overflow="auto";
     player.pause();
     player = "";
     vidModalStatus=false;
