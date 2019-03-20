@@ -3,9 +3,13 @@ var ulElement = "";
 var selElement = "";
 var videoModal = "";
 var player = "";
+var myFrame = "";
+var frameDiv = "";
+var vidModalStatus=false;
 var autoSwitchEpisode = false;
 var isFullscreen = 1;
 
+document.addEventListener("resize", rezHandler);
 document.addEventListener("fullscreenchange", FShandler);
 document.addEventListener("webkitfullscreenchange", FShandler);
 document.addEventListener("mozfullscreenchange", FShandler);
@@ -17,12 +21,16 @@ if (e.keyCode === 70) {
 	if (isFullscreen % 2 === 0) {
             if (document.exitFullscreen) {
                 document.exitFullscreen();
+                rezHandler();
             } else if (document.webkitExitFullscreen) {
                 document.webkitExitFullscreen();
+                rezHandler();
             } else if (document.mozCancelFullScreen) {
                 document.mozCancelFullScreen();
+                rezHandler();
             } else if (document.msExitFullscreen) {
                 document.msExitFullscreen();
+                rezHandler();
             }
         } else {
             if (player.requestFullscreen) {
@@ -57,6 +65,14 @@ if (e.keyCode === 70) {
     }
 }, false);
 
+function rezHandler() {
+    if (vidModalStatus===true){
+        var tempHeight=videoModal.firstElementChild.offsetHeight+20;
+        parent.frameDiv.style.height=String(tempHeight)+"px";
+    }
+}
+
+
 function FShandler() {
     isFullscreen++;
 }
@@ -70,20 +86,17 @@ function changeSeason(elem) {
     tempStr = "C" + tempStr + String(myVal);
     ulElement = document.getElementById(String(tempStr));
     ulElement.style.display = "block";
+    parent.resizeFrame();
 }
 
-function showModal(elem) {
-    var tempStr = elem.id;
-    tempStr = tempStr.replace("A", "B");
-    modal = document.getElementById(String(tempStr));
-    tempStr = tempStr.replace("B", "selector");
-    selElement = document.getElementById(String(tempStr) + String("_"));
+function showModal(id) {
+    var tempStr = id;
+    selElement = document.getElementById(String(id));
     var myVal = selElement.value;
     tempStr = tempStr.replace("selector", "C");
     tempStr = tempStr.split("C").pop();
-    tempStr = "C" + tempStr + "_" + String(myVal);
+    tempStr = "C" + tempStr + String(myVal);
     ulElement = document.getElementById(String(tempStr));
-    modal.style.display = "block";
     ulElement.style.display = "block";
 }
 
@@ -93,7 +106,11 @@ function showVideoModal(elem) {
     videoModal = document.getElementById(String(tempStr));
     tempStr = tempStr.replace("E", "F");
     player = document.getElementById(String(tempStr));
-    videoModal.style.display = "block";
+    videoModal.style.cssText = "background-color: white; display: block;";
+    videoModal.firstElementChild.style.cssText = "width: auto; height: auto; margin: 0; padding: 0; border: 0;";
+    var tempHeight=(videoModal.firstElementChild.offsetHeight)+18;
+    parent.frameDiv.style.height=String(tempHeight)+"px";
+    vidModalStatus=true;        
 }
 
 function showVideoModalsetSubs(elem, srcStr) {
@@ -102,7 +119,11 @@ function showVideoModalsetSubs(elem, srcStr) {
     videoModal = document.getElementById(String(tempStr));
     tempStr = tempStr.replace("E", "F");
     player = document.getElementById(String(tempStr));
-    videoModal.style.display = "block";
+    videoModal.style.cssText = "background-color: white; display: block;";
+    videoModal.firstElementChild.style.cssText = "width: auto; height: auto; margin: 0; padding: 0; border: 0;";
+    var tempHeight=(videoModal.firstElementChild.offsetHeight)+18;
+    parent.frameDiv.style.height=String(tempHeight)+"px";
+    vidModalStatus=true;  
     var subNum = parseInt(player.childElementCount) - 1;
     var array = srcStr.split(',');
     for (var i = 1, j = 0; i <= subNum; i++, j++) {
@@ -110,21 +131,18 @@ function showVideoModalsetSubs(elem, srcStr) {
     }
 }
 
+
 function hideModal() {
-    modal.style.display = "none";
-    ulElement.style.display = "none";
+    parent.modal.style.display = "none";
+    parent.frameDiv.style.display = "none";    
 }
 
 function hideVideoModal() {
     videoModal.style.display = "none";
     player.pause();
     player = "";
-}
-
-function setAlt(elem, altStr) {
-    var me = document.getElementById(elem.id);
-    me.alt = altStr;
-    me.style.display = "inline";
+    vidModalStatus=false;
+    parent.resizeFrame();
 }
 
 function resetPlayer(){
@@ -213,52 +231,15 @@ function autoSwitch() {
     }
 }
 
-function isDescendant(parent, child) {
-    var node = child.parentNode;
-    while (node !== null) {
-        if (node === parent) {
-            return true;
+window.parent.onclick = function (event) {
+    if (event.target === parent.modal) {
+        if (player==""){
+            parent.modal.style.display = "none";
+            parent.myFrame="";
+        } else {
+            hideVideoModal();
         }
-        node = node.parentNode;
-    }
-    return false;
-}
-
-window.onclick = function (event) {
-    if (event.target === modal) {
-        modal.style.display = "none";
-    }
-    if (event.target === videoModal) {
-        videoModal.style.display = "none";
-        player.pause();
-        player = "";
     }
 };
 
-function setPadding(){
-	document.getElementById("paddingDiv").style.display="block";
-	var wrapper = document.getElementById("wrapper");
-    var wDiv = wrapper.offsetWidth;
-    var tempArr = document.getElementsByClassName("showDiv");
-    var temp1 = tempArr[0];
-	var temp2 = tempArr[1];
-    var style = getComputedStyle(temp1);
-	var extraSpace = Math.abs(parseFloat((temp1.offsetLeft + temp1.getBoundingClientRect().width)-temp2.offsetLeft));
-    var sDiv = parseFloat(temp1.getBoundingClientRect().width);
-	var currentElHeight=parseInt(style.marginTop)+temp1.offsetHeight;
-    var rate = Math.floor(wDiv/(sDiv+(extraSpace/2)));
-	var numbEl = (wrapper.childElementCount-1)%rate;
-	var realRate = Math.floor(rate-numbEl);
-	var extraElementW=sDiv*realRate+extraSpace*(realRate-1)+parseFloat(style.marginLeft);
-	if (numbEl <= 0){
-        extraElementW=0;
-        currentElHeight=0;
-		document.getElementById("paddingDiv").style.display="none";
-    } else {
-		document.getElementById("paddingDiv").style.width=extraElementW.toString()+"px";
-		document.getElementById("paddingDiv").style.height=currentElHeight.toString()+"px";
-	}
-}
-
-window.onload=setPadding;
-window.onresize=setPadding;
+parent.window.onresize=rezHandler;

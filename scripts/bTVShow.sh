@@ -2,7 +2,7 @@
 
 cd "$(dirname "$0")"
 dbNameTV="../dbTV.json"
-TVhtml=../TV.html
+TVhtml="../TV.html"
 . config.cfg
 
 myID=${1}
@@ -10,29 +10,11 @@ i=${2}
 myAlt=$(echo ${i} | sed "s/'//g") #strips single quotes from the Show string
 myAlt=$(echo ${myAlt} | sed "s/\"//g") #strips double guotes from the Show string
 myImg=$(jq -r "map(select(.Show | contains(\"${i}\")) .Poster) | .[]" $dbNameTV)
-if [[ $myImg != *".jpg"*  ]]; then #if missing poster, generates one
-        myImg="";
-        
-        UUID="rangen_"$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)".jpg";
-        
-		if [ ! -d "$dTVFolder" ]; then #creates foldser if missing
-			mkdir $dTVFolder
-		fi
-		
-		$(convert $AutogenImgResizeTV -gravity center -weight 700 -pointsize 200 -annotate 0 "${2}" $dTVFolder$UUID);
-		chmod 755 -R $dTVFolder 
-		tempFolder=$(basename $dTVFolder)
-		myImg=$tempFolder"/"$UUID;
-        currentShow=$(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[0].File) | .[]" $dbNameTV)
-        currentShow="../"$currentShow;
-        $(./fixFile.sh $currentShow $myID $myImg);
-fi
-htmlStr+="<div class=\"showDiv\">\n<input id=\"A${myID}\" class=\"myBtn\" value=\"\" onclick=\"javascript:showModal(this)\" type=\"image\" src=\"${myImg}\" onload=\"javascript:setAlt(this, '${myAlt}')\">"
-htmlStr+="\n<div id=\"B${myID}\" class=\"modal\">\n<div class=\"modal-content\">"
+
 numSeasons=$(jq -r "map(select(.Show | contains(\"${i}\")) .Seasons) | .[]" $dbNameTV) 
 myEpisodes=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[].File) | .[]" $dbNameTV)) #creates an array with all the filepaths for all the episodes
 numEpisodes=${#myEpisodes[@]} #gets array size
-htmlStr+="\n<span onclick=\"javascript:hideModal()\" class=\"close\">&times;</span>\n<select id=\"selector${myID}_\" onchange=\"javascript:changeSeason(this)\" class=\"showSelect\">"
+htmlStr+="<!DOCTYPE html><html><head><title>Myflix</title><meta charset=\"UTF-8\"><meta name=\"description\" content=\"Dario Rostirolla\"><meta name=\"keywords\" content=\"HTML, CSS\"><meta name=\"author\" content=\"Dario Rostirolla\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link href=\"../css/tv.css\" rel=\"stylesheet\" type=\"text/css\"><link rel=\"icon\" type=\"image/png\" href=\"../img/favicon.png\"></head><body>\n<span onclick=\"javascript:hideModal()\" class=\"close\">&times;</span>\n<select id=\"selector${myID}_\" onchange=\"javascript:changeSeason(this)\" class=\"showSelect\">"
 seasonNum=0
 while [[ $seasonNum -lt $numSeasons ]]; do #adds a option for every season of the tv show
     ((seasonNum++))
@@ -69,13 +51,13 @@ while [[ $epNum -le $numEpisodes ]] && [[ $seasonNum -le $numSeasons ]]; do
                 ((tempIndex++))
             done
             #different JS function to use when user selects episode
-            htmlStr+="\n<li>\n<input id=\"D${myID}_${epNum}\" class=\"epButton\" onclick=\"javascript:showVideoModalsetSubs(this,'"${tempHtmlStr}"')\" type=\"button\" value=\"${name}\" >\n"
+            htmlStr+="\n<li>\n<input id=\"D${myID}_${epNum}\" class=\"epButton\" onclick=\"javascript:showVideoModalsetSubs(this,'../"${tempHtmlStr}"')\" type=\"button\" value=\"${name}\" >\n"
         else #no subtitles, different JS function to use when user selects episode, so different code
             htmlStr+="\n<li>\n<input id=\"D${myID}_${epNum}\" class=\"epButton\" onclick=\"javascript:showVideoModal(this)\" type=\"button\" value=\"${name}\" >\n"
         fi
         htmlStr+="<div id=\"E${myID}_${epNum}\" class=\"modal\">\n<div class=\"modal-content\">"
 		htmlStr+="<span onclick=\"javascript:hideVideoModal()\" class=\"close\">&times;</span>\n<p id=\"epTitle\">${name}</p>"
-        htmlStr+="\n<video id=\"F${myID}_${epNum}\" class=\"video_player\" controls preload=\"none\">\n<source src=\"${episode}\" type=\"video/mp4\">"
+        htmlStr+="\n<video id=\"F${myID}_${epNum}\" class=\"video_player\" controls preload=\"none\" onplaying=\"javascript:rezHandler()\">\n<source src=\"../${episode}\" type=\"video/mp4\">"
         htmlStr+=${subsStr}; #appends subs, is empty if there aren't any
         htmlStr+="\n</video>\n<div class=\"nextEpDiv\">\n<input class=\"nextEpButton\" onclick=\"javascript:resetPlayer()\" type=\"button\" value=\"Reset Player\">\n<input class=\"prevEpButton\" onclick=\"javascript:prevEp()\" type=\"button\" value=\"Prev episode\" >\n<input class=\"nextEpButton\" onclick=\"javascript:nextEp()\" type=\"button\" value=\"Next episode\">\n<label class=\"autoButtonLabel\">\n<input class=\"autoButton\" onclick=\"javascript:autoSwitch()\" type=\"checkbox\" value=\"Automatic\">Automatic</label>\n</div>\n</div>\n</div>\n</li>"
         ((realEpNum++))
@@ -86,5 +68,5 @@ while [[ $epNum -le $numEpisodes ]] && [[ $seasonNum -le $numSeasons ]]; do
         realEpNum=1
     fi
 done
-htmlStr+="\n</ul>\n</div>\n</div>\n</div>"
+htmlStr+="\n</ul>\n</div>\n</div>\n<script async type=\"text/javascript\" src=\"../js/TVScript.js\" onload=\"javascript:showModal('selector${myID}_')\"></script></body></html>"
 echo -e $htmlStr

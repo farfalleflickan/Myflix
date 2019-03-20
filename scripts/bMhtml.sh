@@ -25,7 +25,7 @@ jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Mo
 		output="rangen_"$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)".jpg"
 		currentFile=$(jq -r "map(select(.Movie==\"${i}\") .File) | .[]" $dbNameMovie)
 		movieFile="../"$currentFile
-		
+
 		if [ ! -d "$dMoFolder" ]; then
 				mkdir $dMoFolder
 		fi
@@ -33,7 +33,7 @@ jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Mo
 		durationTime=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 $movieFile)
 		durationTime=${durationTime%.*}
 		halfTime=$((durationTime/2))
-		
+
 		$(ffmpeg -ss $halfTime -i $movieFile -vframes 1 -q:v 3 $dMoFolder$output 2> /dev/null);
 		
 		if [ ! -z "$AutogenImgResizeMo" ]; then

@@ -2,10 +2,10 @@
 
 cd "$(dirname "$0")"
 dbNameTV="../dbTV.json"
-TVhtml=../TV.html
+TVhtml="../TV.html"
 . config.cfg
 
-printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"UTF-8\">\n<meta name=\"description\" content=\"Dario Rostirolla\">\n<meta name=\"keywords\" content=\"HTML, CSS\">\n<meta name=\"author\" content=\"Dario Rostirolla\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link href=\"css/tv.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.png\">\n</head>\n<body>\n<script async type=\"text/javascript\" src=\"js/TVcript.js\"></script><div id=\"wrapper\">" > $TVhtml
+printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"UTF-8\">\n<meta name=\"description\" content=\"Dario Rostirolla\">\n<meta name=\"keywords\" content=\"HTML, CSS\">\n<meta name=\"author\" content=\"Dario Rostirolla\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link href=\"css/tv.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.png\">\n</head>\n<body>\n<script type=\"text/javascript\" src=\"js/MainTVScript.js\"></script>\n<div id=\"wrapper\">\n" > $TVhtml
 #html specific, per show specific, id given to elements 
 # A+myID identifies the show's "input button"
 # B+myID identifies the show's modal
@@ -16,21 +16,46 @@ printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"
 # F+myID+_+(number of episode) identifies the episode's video player
 myID=1
 pidArray=() 
-tmpFileArray=()
 IFS=$'\n' 
+myHtmlShow_Folder=$(echo "${TVhtml/\.html/ShowHtml}") 
+if [[ ! -e $myHtmlShow_Folder ]]; then
+    mkdir $myHtmlShow_Folder
+fi
 for i in $(jq -r '.[].Show' $dbNameTV); do #sets i to to the value of "Show", loops through every show in the database
-    tmpfile=$(mktemp)
-    ./bTVShow.sh $myID $i > $tmpfile &
+	myAlt=$(echo ${i} | sed "s/'//g") #strips single quotes from the Show string
+	myAlt=$(echo ${myAlt} | sed "s/\"//g") #strips double guotes from the Show string
+	myImg=$(jq -r "map(select(.Show | contains(\"${i}\")) .Poster) | .[]" $dbNameTV)
+	if [[ $myImg != *".jpg"*  ]]; then #if missing poster, generates one
+        myImg="";
+        UUID="rangen_"$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)".jpg";
+		if [ ! -d "$dTVFolder" ]; then #creates foldser if missing
+			mkdir $dTVFolder
+		fi	
+		$(convert "${AutogenImgResizeTV}" -gravity center -weight 700 -pointsize 200 -annotate 0 "${2}" $dTVFolder$UUID);
+		chmod 755 -R $dTVFolder 
+		tempFolder=$(basename $dTVFolder)
+		myImg=$tempFolder"/"$UUID;
+        currentShow=$(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[0].File) | .[]" $dbNameTV)
+        currentShow="../"$currentShow;
+        $(./fixFile.sh $currentShow $myID $myImg);
+	fi
+	myTempName=$(echo ${myAlt} | sed 's/ //g')
+	myTempName=${myTempName#../}
+	myHtmlShow=$myTempName".html"
+	myHtmlShow=$(echo "${TVhtml/\.html/$myHtmlShow}")
+    myHtmlShow=${myHtmlShow#../}
+    myShowPath=$myHtmlShow_Folder"/"$myHtmlShow
+    myShowPath=${myShowPath#../}
+    
+	printf "<div class=\"showDiv\">\n<input id=\"A${myID}\" class=\"myBtn\" value=\"\" onclick=\"javascript:setFrame(this, '${myShowPath}' )\" type=\"image\" src=\"${myImg}\" onload=\"javascript:setAlt(this, '${myAlt}')\">\n<div id=\"B${myID}\" class=\"modal\">\n<div id=\"frameDiv${myID}\" class=\"modal-content\">\n<iframe id=\"IN${myID}\" src=\"\" frameborder=\"0\" onload=\"javascript:resizeFrame(this)\" allowfullscreen></iframe>\n</div>\n</div>\n</div>\n" >> $TVhtml
+    ./bTVShow.sh $myID $i > "../"$myShowPath &
     pidArray+=($!)
-    tmpFileArray+=($tmpfile)
     ((myID++)) #change of show
 done
 numThreads=${#pidArray[@]}
 tempIndex=0;
 while [ $tempIndex -lt $numThreads ]; do
     wait ${pidArray[${tempIndex}]}
-    cat "${tmpFileArray[${tempIndex}]}" >> $TVhtml
-    rm "${tmpFileArray[${tempIndex}]}"
     ((tempIndex++))
 done
 echo -e '\n<div id="paddingDiv">\n</div>\n</div>\n</body>\n</html>' >> $TVhtml
