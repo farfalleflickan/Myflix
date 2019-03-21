@@ -26,15 +26,7 @@ if [[ "${filename}" =~ ${regexM} ]]; then #if filename matches regex then it's a
 			myPoster="";
                         subStr='{"subFile":"", "lang":"en","label":"English"}'
 			if $fetchMmetadata; then
-				if [[ $movie == *"Departures"* ]]; then #hardcoded id's for movies
-					myID="1069238";
-				elif [[ $movie == *"Pilgrim"* ]]; then
-					myID="0446029";
-				elif [[ $movie == *"Guide.to.the.Galaxy"*  ]]; then
-					myID="0371724";
-				else
-					myID=$(./getMid.sh "${movie}");
-				fi
+				myID=$(./getMid.sh "${movie}");
 
 				if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
 					myPoster=$(./getMposter.sh "${myID}"); #fetches poster for ID
