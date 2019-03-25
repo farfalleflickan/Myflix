@@ -78,6 +78,17 @@ function FShandler() {
     isFullscreen++;
 }
 
+function isDescendant(parent, child) {
+    var node = child.parentNode;
+    while (node !== null) {
+        if (node === parent) {
+            return true;
+        }
+        node = node.parentNode;
+    }
+    return false;
+}
+
 function changeSeason(elem) {
     ulElement.style.display = "none";
     var e = document.getElementById(elem.id);
