@@ -16,7 +16,9 @@ printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"
 # B+myID identifies the movie's modal
 # C+myID identifies the movie's video player
 myID=1
-jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Movie", loops through every movie in the database
+IFS=$'\n'
+MovieList=$(jq -r '.[].Movie' $dbNameMovie); #puts all movie titles in "MovieList variable
+for i in $MovieList; do #loops through every movie in the database
 	myImg=$(jq -r "map(select(.Movie==\"${i}\") .Poster) | .[]" $dbNameMovie)
 	if [[ $myImg != *".jpg"*  ]]; then
 		echo -e "Please note, \"""${i}""\" does NOT have a poster!\nGenerating one...";
@@ -33,12 +35,10 @@ jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Mo
 		durationTime=$(ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 $movieFile)
 		durationTime=${durationTime%.*}
 		halfTime=$((durationTime/2))
-
 		$(ffmpeg -ss $halfTime -i $movieFile -vframes 1 -q:v 3 $dMoFolder$output 2> /dev/null);
-		
-		if [ ! -z "$AutogenImgResizeMo" ]; then
-				convert $AutogenImgResizeMo $dMoFolder$output $dMoFolder$output
-		fi
+        if [ ${#AutogenImgResizeMo[@]} -gt 0 ]; then
+                convert "${AutogenImgResizeMo[@]}" $dMoFolder$output $dMoFolder$output
+        fi
 		if $compressImgMo; then
 				convert -strip -interlace Plane -gaussian-blur 0.05 -quality 90% $dMoFolder$output $dMoFolder$output
 		fi
@@ -49,8 +49,7 @@ jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Mo
 		chmod 755 -R $dMoFolder
 		tempFolder=$(basename $dMoFolder)
 		myImg=$tempFolder"/"$output;
-		$(./fixFile.sh $currentFile $myID $myImg);		
-		
+		$(./fixFile.sh $currentFile $myID $myImg);
 	fi
 	myFile=$(jq -r "map(select(.Movie==\"${i}\") .File) | .[]" $dbNameMovie)
 	mySub=($(jq -r "map(select(.Movie==\"${i}\") .Subs[].subFile) | .[]" $dbNameMovie))
@@ -76,13 +75,13 @@ jq -r '.[].Movie' $dbNameMovie | while read i; do #sets i to to the value of "Mo
 	else
 		htmlStr+="<input id=\"A${myID}\" class=\"myBtn\" value=\"\" onclick=\"javascript:showModal(this)\" type=\"image\" src=\"${myImg}\" onload=\"javascript:setAlt(this, '${myAlt}')\">"
 	fi
-	htmlStr+="\n<div id=\"B${myID}\" class=\"modal\">\n<div class=\"modal-content\">\n<video id=\"C${myID}\" class=\"video_player\" controls preload=\"none\">\n<source src=\"${myFile}\" type=\"video/mp4\">"
+	htmlStr+="\n<div id=\"B${myID}\" class=\"modal\">\n<div class=\"modal-content\">\n<video id=\"C${myID}\" class=\"video_player\" controls preload=\"none\">\n<source src=\"${myFile}\" type=\"video/mp4\">";
 	htmlStr+=$tempHtml;
-	htmlStr+="\n</video>\n<span onclick=\"javascript:hideModal()\" class=\"close\">&times;</span>\n"
-	htmlStr+="</div>\n</div>\n</div>"
-	echo -e $htmlStr >> $Mhtml
-	htmlStr=""
-	((myID++))
+	htmlStr+="\n</video>\n<span onclick=\"javascript:hideModal()\" class=\"close\">&times;</span>\n";
+	htmlStr+="</div>\n</div>\n</div>";
+	echo -e $htmlStr >> $Mhtml;
+	htmlStr="";
+	((myID++));
 done
 echo -e '\n<div id="paddingDiv">\n</div>\n</div>\n</body>\n</html>' >> $Mhtml
 chmod 755 $Mhtml
