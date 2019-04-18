@@ -60,3 +60,4 @@ while [ $tempIndex -lt $numThreads ]; do
 done
 echo -e '\n<div id="paddingDiv">\n</div>\n</div>\n</body>\n</html>' >> $TVhtml
 chmod 755 $TVhtml
+chmod 755 -R $myHtmlShow_Folder
