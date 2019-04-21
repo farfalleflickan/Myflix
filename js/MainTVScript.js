@@ -51,7 +51,7 @@ function setPadding(){
         if (numbEl <= 0){
             extraElementW=0;
             currentElHeight=0;
-            document.resizeASDgetElementById("paddingDiv").style.display="none";
+            document.getElementById("paddingDiv").style.display="none";
         } else {
             document.getElementById("paddingDiv").style.width=extraElementW.toString()+"px";
             document.getElementById("paddingDiv").style.height=currentElHeight.toString()+"px";
