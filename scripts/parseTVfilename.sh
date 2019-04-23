@@ -13,6 +13,9 @@ regexTV1="(.*)[ .][sS]([0-9]{1})[eE]([0-9]{2})[ .](.*)"
 regexTV2="(.*)[ .][sS]([0-9]{2})[eE]([0-9]{2})[ .](.*)"
 regexTV3="(.*)[.]([0-9]{2})[x]([0-9]{2})[.](.*)"
 regexTV4="(.*)[.]([0-9]{1})[x]([0-9]{2})[.](.*)"
+regexExtra="/Season.Extras/" #path in where "extras" for a tv show will be found
+tempExtraPath=${TVpath#../}
+regexExtraShow="(${tempExtraPath})(.*)(${regexExtra})" #matches tv show by "cutting it" between the TVpath variable & the regexExtra variable
 TMDBapi=""
 getEpisodeName=false
 createTVsubs=false
@@ -30,15 +33,15 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
 			myTitle=""
 			sub=""
 			subStr='{"subFile":"", "lang":"en","label":"English"}'
-                        tvShowSeason=$(jq -r "map(select(.Show == \"${myShow}\") | .Seasons) | .[]" $dbNameTV)
-                        if [ "$mySeason" -gt "$tvShowSeason" ]; then
-                            tmpfile=$(mktemp)
-                            tempIndex=$(jq -r "index(map(select(.Show == \"${myShow}\")))" $dbNameTV)
-                            toAdd=$(jq -r ".[$tempIndex].Seasons = \"${mySeason}\"" $dbNameTV)
-                            echo -en $toAdd"\n" >> $tmpfile;
-                            cp $tmpfile $dbNameTV;
-                            rm $tmpfile
-                        fi
+            tvShowSeason=$(jq -r "map(select(.Show == \"${myShow}\") | .Seasons) | .[]" $dbNameTV)
+            if [ "$mySeason" -gt "$tvShowSeason" ]; then
+                tmpfile=$(mktemp)
+                tempIndex=$(jq -r "index(map(select(.Show == \"${myShow}\")))" $dbNameTV)
+                toAdd=$(jq -r ".[$tempIndex].Seasons = \"${mySeason}\"" $dbNameTV)
+                echo -en $toAdd"\n" >> $tmpfile;
+                cp $tmpfile $dbNameTV;
+                rm $tmpfile
+            fi
 			if $fetchTVmetadata; then
 				if [[ ! -z "$TMDBapi" ]] && $getEpisodeName; then
 					myID=$(jq -r "map((select(.Show == \"${myShow}\") | .ID)) | .[]" $dbNameTV)
@@ -156,8 +159,8 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
 			fi
 			tempPath=$(dirname $1);
 			tempPath=${tempPath%/*};
-			numSeasons=$(find $tempPath -mindepth 1 -type d | wc -l);
-			jq -r ". |= . + [{\"Show\": \"${myShow}\",\"ID\":\"${myID}\",\"Poster\":\"${myPoster}\",\"Seasons\":\"${numSeasons}\",\"Episodes\":[{\"Season\":\"${mySeason}\",\"Episode\":\"${myEpisode}\",\"Title\":\"${myTitle}\",\"File\":\"${file}\",\"Subs\":[${subStr}]}]}]" $dbNameTV | sponge $dbNameTV;
+            numSeasons=$(ls $tempPath | egrep '^Season[.][0-9]{1,2}' | wc -l); #counts the number of seasons of episode by counting the first subfolders to the show folder
+			jq -r ". |= . + [{\"Show\": \"${myShow}\",\"ID\":\"${myID}\",\"Poster\":\"${myPoster}\",\"Seasons\":\"${numSeasons}\",\"Episodes\":[{\"Season\":\"${mySeason}\",\"Episode\":\"${myEpisode}\",\"Title\":\"${myTitle}\",\"File\":\"${file}\",\"Subs\":[${subStr}]}], \"Extras\":[]}]" $dbNameTV | sponge $dbNameTV;
 		fi
 	else
 		myPoster="";
@@ -224,9 +227,59 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
 		fi
 		tempPath=$(dirname $1);
 		tempPath=${tempPath%/*};
-		numSeasons=$(find $tempPath -mindepth 1 -type d | wc -l); #counts the number of seasons of episode by counting the first subfolders to the show folder
-		echo -e '[\n{\n"Show": "'"${myShow}"'",\n"ID":"'"${myID}"'",\n "Poster":"'"${myPoster}"'", "Seasons":"'"${numSeasons}"'", "Episodes":[{"Season":"'"${mySeason}"'","Episode":"'"${myEpisode}"'","Title":"'"${myTitle}"'","File":"'"${file}"'",'"${subStr}"']}]}]\n' >> $dbNameTV;
+		numSeasons=$(ls $tempPath | egrep '^Season[.][0-9]{1,2}' | wc -l); #counts the number of seasons of episode by counting the first subfolders to the show folder
+		echo -e '[\n{\n"Show": "'"${myShow}"'","ID":"'"${myID}"'","Poster":"'"${myPoster}"'","Seasons":"'"${numSeasons}"'","Episodes":[{"Season":"'"${mySeason}"'","Episode":"'"${myEpisode}"'","Title":"'"${myTitle}"'","File":"'"${file}"'",'"${subStr}"']}],\n"Extras":[]}]\n' >> $dbNameTV;
 	fi
+elif [[ "${file}" == *"${regexExtra}"* ]]; then
+    if [[ "${file}" =~ ${regexExtraShow} ]]; then
+        myShow=${BASH_REMATCH[2]};
+        myShow=${myShow//./ };
+        myTitle=${filename%%.mp4}
+        myTitle=${myTitle//./ }
+        mySeason="Extras";
+        sub=""
+        subStr='{"subFile":"", "lang":"en","label":"English"}'
+        if $createTVsubs; then
+            show=${1%%.mp4} #removes .mp4
+            subName=${show#../} #removes ../
+            subName=$(basename "$subName")
+            tempPath=$(dirname $1)
+            tempPath=$tempPath"/";
+            sub=($(find $tempPath -name $subName"*.srt"))
+            if [ "${#sub[@]}" -ge 1 ]; then
+                subStr=''; 
+            fi
+            counter=0;
+            for tempSub in "${sub[@]}"; do
+                if  [ $counter -ge 1 ]; then
+                    subStr+=","
+                fi
+                tempSubNoExt="${tempSub%.*}"
+                if [[ -f $tempSubNoExt".vtt" ]]; then
+                    lang="${tempSubNoExt##*_}"
+                    if [ $lang == $tempSubNoExt ]; then
+                        lang="en";
+                    fi
+                    tempSub=$tempSubNoExt".vtt"
+                    tempSub=${tempSub#../}
+                    subStr+='{"subFile":"'"${tempSub}"'", "lang":"'"${lang}"'","label":"'"${lang}"'"}'
+                else
+                    if [[ -f $tempSub ]]; then
+                        $(ffmpeg -i $tempSub $tempSubNoExt".vtt" 2> /dev/null )
+                        lang="${tempSubNoExt##*_}"
+                        if [ $lang == $tempSubNoExt ]; then
+                            lang="en";
+                        fi
+                        tempSub=$tempSubNoExt".vtt"
+                        tempSub=${tempSub#../}
+                        subStr+='{"subFile":"'"${tempSub}"'", "lang":"'"${lang}"'","label":"'"${lang}"'"}'
+                    fi
+                fi
+                ((counter++))
+            done
+        fi
+        jq -r "map((select(.Show == \"${myShow}\") | .Extras) |= . + [{\"Title\":\"${myTitle}\",\"File\":\"${file}\",\"Subs\":[${subStr}]}])" $dbNameTV | sponge $dbNameTV;
+    fi
 else
 	echo -n "Unparsable "
 	echo $filename
