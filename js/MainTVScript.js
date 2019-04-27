@@ -54,7 +54,7 @@ function setPadding(){
             document.getElementById("paddingDiv").style.display="none";
         } else {
             document.getElementById("paddingDiv").style.width=extraElementW.toString()+"px";
-            document.getElementById("paddingDiv").style.paddingLeft="5px";
+			document.getElementById("paddingDiv").style.paddingLeft="5px";
             document.getElementById("paddingDiv").style.height=currentElHeight.toString()+"px";
         }
     }
