@@ -55,6 +55,7 @@ else # uses very rudimental grep to parse the html of the IMDB search page
 	output=$(curl -s "https://www.imdb.com/find?ref_=nv_sr_fn&q="${movie}"&s=all" | grep '<td class="result_text"> <a href="/title/' | head -n1 )
 	output=${output#<tr class=\"findResult odd\"> <td class=\"primary_photo\"> <a href=\"/title/tt}
 	output=${output%%/?ref*}
+	output=${output:0:7} #trims to the id 
 	echo $output #returns empty string if not found
 	exit;
 fi
