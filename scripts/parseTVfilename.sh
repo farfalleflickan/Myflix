@@ -52,7 +52,7 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
 				if [[ ! -z "$TMDBapi" ]] && $getEpisodeName && [[ -z $myTitle ]]; then
 					myID=$(jq -r "map((select(.Show == \"${myShow}\") | .ID)) | .[]" $dbNameTV)
 					myUrl="https://api.themoviedb.org/3/tv/"${myID}"/season/"${mySeason}"/episode/"${myEpisode}"?language=en&api_key="${TMDBapi}
-					myTitle=$(curl -s --request GET --url $myUrl --data '{}' | jq -r '.name')
+					myTitle=$(curl -s --request GET --url $myUrl | jq -r '.name')
 					myTitle=$(echo ${myTitle} | sed "s/'//g")
 					myTitle=$(echo ${myTitle} | sed "s/\"//g")
 					if [[ "${myTitle}" == "null" ]]; then
@@ -116,7 +116,7 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
 				if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
 					if [[ ! -z "$TMDBapi" ]] && $getEpisodeName && [[ -z $myTitle ]]; then
 						myUrl="https://api.themoviedb.org/3/tv/"${myID}"/season/"${mySeason}"/episode/"${myEpisode}"?language=en&api_key="${TMDBapi}
-						myTitle=$(curl -s --request GET --url $myUrl --data '{}' | jq -r '.name')
+						myTitle=$(curl -s --request GET --url $myUrl | jq -r '.name')
 						myTitle=$(echo ${myTitle} | sed "s/'//g")
 						myTitle=$(echo ${myTitle} | sed "s/\"//g")
 						if [[ "${myTitle}" == "null" ]]; then
@@ -189,7 +189,7 @@ if [[ "${filename}" =~ ${regexTV1} ]] || [[ "${filename}" =~ ${regexTV2} ]] || [
 			if [[ $myID =~ ^-?[0-9]+$ ]]; then #checks if ID is a number
 				if [[ ! -z "$TMDBapi" ]] && $getEpisodeName  && [[ -z $myTitle ]]; then
 					myUrl="https://api.themoviedb.org/3/tv/"${myID}"/season/"${mySeason}"/episode/"${myEpisode}"?language=en&api_key="${TMDBapi}
-					myTitle=$(curl -s --request GET --url $myUrl --data '{}' | jq -r '.name')
+					myTitle=$(curl -s --request GET --url $myUrl | jq -r '.name')
 					myTitle=$(echo ${myTitle} | sed "s/'//g")
 					myTitle=$(echo ${myTitle} | sed "s/\"//g")
 					if [[ "${myTitle}" == "null" ]]; then
