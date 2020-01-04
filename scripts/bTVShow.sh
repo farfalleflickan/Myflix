@@ -1,4 +1,5 @@
 #! /bin/bash
+set -x;
 
 cd "$(dirname "$0")"
 dbNameTV="../dbTV.json"
@@ -9,11 +10,11 @@ myID=${1}
 i=${2}
 myAlt=$(echo ${i} | sed "s/'//g") #strips single quotes from the Show string
 myAlt=$(echo ${myAlt} | sed "s/\"//g") #strips double guotes from the Show string
-myImg=$(jq -r "map(select(.Show | contains(\"${i}\")) .Poster) | .[]" $dbNameTV)
+myImg=$(jq -r "map(select(.Show==\"${i}\") .Poster) | .[]" $dbNameTV)
 
-numSeasons=$(jq -r "map(select(.Show | contains(\"${i}\")) .Seasons) | .[]" $dbNameTV) 
-myEpisodes=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[].File) | .[]" $dbNameTV)) #creates an array with all the filepaths for all the episodes
-myExtras=($(jq -r "map(select(.Show | contains(\"${i}\")) .Extras[].File) | .[]" $dbNameTV))
+numSeasons=$(jq -r "map(select(.Show==\"${i}\") .Seasons) | .[]" $dbNameTV) 
+myEpisodes=($(jq -r "map(select(.Show==\"${i}\") .Episodes[].File) | .[]" $dbNameTV)) #creates an array with all the filepaths for all the episodes
+myExtras=($(jq -r "map(select(.Show==\"${i}\") .Extras[].File) | .[]" $dbNameTV))
 numEpisodes=${#myEpisodes[@]} #gets array size
 numExtras=${#myExtras[@]} #gets extra's array size
 htmlStr+="<!DOCTYPE html><html><head><title>Myflix</title><meta charset=\"UTF-8\"><meta name=\"description\" content=\"Dario Rostirolla\"><meta name=\"keywords\" content=\"HTML, CSS\"><meta name=\"author\" content=\"Dario Rostirolla\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link href=\"../css/tv.css\" rel=\"stylesheet\" type=\"text/css\"><link rel=\"icon\" type=\"image/png\" href=\"../img/favicon.png\"></head><body>\n<span onclick=\"javascript:hideModal()\" class=\"close\">&times;</span>\n<select id=\"selector${myID}_\" onchange=\"javascript:changeSeason(this)\" class=\"showSelect\">"
@@ -31,21 +32,21 @@ htmlStr+="\n</select>\n<ul id=\"C${myID}_${seasonNum}\" class=\"showEpUl\">"
 epNum=0 #start of Episodes object array in json database
 realEpNum=1 #actual episode number
 while [[ $epNum -le $numEpisodes ]] && [[ $seasonNum -le $numSeasons ]]; do
-    episode=$(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].File) | .[]" $dbNameTV)
+    episode=$(jq -r "map(select(.Show==\"${i}\") .Episodes[${epNum}].File) | .[]" $dbNameTV)
     if [[ $episode == *"Season."$seasonNum* ]] || [[ $episode == *"S0"$seasonNum* ]] || [[ $episode == *"S"$seasonNum* ]]; then #if the episode file path contains the current season
-        name=$(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Title) | .[]" $dbNameTV)
+        name=$(jq -r "map(select(.Show==\"${i}\") .Episodes[${epNum}].Title) | .[]" $dbNameTV)
         if [[ -z $name ]]; then #if episode has no episode name sets the name to "S(number of the season)E(number of the episode)"
             name="S${seasonNum}E${realEpNum}";
         fi
-        mySub=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[].subFile) | .[]" $dbNameTV)) #creates array with path to all subtitles
+        mySub=($(jq -r "map(select(.Show==\"${i}\") .Episodes[${epNum}].Subs[].subFile) | .[]" $dbNameTV)) #creates array with path to all subtitles
         mySubNum=${#mySub[@]} #gets array size
         tempIndex=0;
         tempHtmlStr="";
         subsStr="";
         if [ $mySubNum -ge 1 ]; then #if there are subtitles
             while [ $tempIndex -lt $mySubNum ]; do #loops through the available subtitles
-                myLang=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[${tempIndex}].lang) | .[]" $dbNameTV))
-                myLabel=($(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[${epNum}].Subs[${tempIndex}].label) | .[]" $dbNameTV))
+                myLang=($(jq -r "map(select(.Show==\"${i}\") .Episodes[${epNum}].Subs[${tempIndex}].lang) | .[]" $dbNameTV))
+                myLabel=($(jq -r "map(select(.Show==\"${i}\") .Episodes[${epNum}].Subs[${tempIndex}].label) | .[]" $dbNameTV))
 				if [ $tempIndex -eq 0 ]; then
 	               	subsStr+="\n<track src='' kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\" default>"
 				else
@@ -82,17 +83,17 @@ extrasNum=0;
 if [[ $extrasNum -lt $numExtras ]]; then
     htmlStr+="\n</ul>\n<ul id=\"C${myID}_${seasonNum}\" class=\"showEpUl\">"   
     while [[ $extrasNum -lt $numExtras ]]; do
-        episode=$(jq -r "map(select(.Show | contains(\"${i}\")) .Extras[${extrasNum}].File) | .[]" $dbNameTV)
-        name=$(jq -r "map(select(.Show | contains(\"${i}\")) .Extras[${extrasNum}].Title) | .[]" $dbNameTV)
-        mySub=($(jq -r "map(select(.Show | contains(\"${i}\")) .Extras[${extrasNum}].Subs[].subFile) | .[]" $dbNameTV)) #creates array with path to all subtitles
+        episode=$(jq -r "map(select(.Show==\"${i}\") .Extras[${extrasNum}].File) | .[]" $dbNameTV)
+        name=$(jq -r "map(select(.Show==\"${i}\") .Extras[${extrasNum}].Title) | .[]" $dbNameTV)
+        mySub=($(jq -r "map(select(.Show==\"${i}\") .Extras[${extrasNum}].Subs[].subFile) | .[]" $dbNameTV)) #creates array with path to all subtitles
         mySubNum=${#mySub[@]} #gets array size
         tempIndex=0;
         tempHtmlStr="";
         subsStr="";
         if [ $mySubNum -ge 1 ]; then #if there are subtitles
             while [ $tempIndex -lt $mySubNum ]; do #loops through the available subtitles
-                myLang=($(jq -r "map(select(.Show | contains(\"${i}\")) .Extras[${extrasNum}].Subs[${tempIndex}].lang) | .[]" $dbNameTV))
-                myLabel=($(jq -r "map(select(.Show | contains(\"${i}\")) .Extras[${extrasNum}].Subs[${tempIndex}].label) | .[]" $dbNameTV))
+                myLang=($(jq -r "map(select(.Show==\"${i}\") .Extras[${extrasNum}].Subs[${tempIndex}].lang) | .[]" $dbNameTV))
+                myLabel=($(jq -r "map(select(.Show==\"${i}\") .Extras[${extrasNum}].Subs[${tempIndex}].label) | .[]" $dbNameTV))
                 if [ $tempIndex -eq 0 ]; then
                     subsStr+="\n<track src='' kind=\"subtitles\" srclang=\"${myLang}\" label=\"${myLabel}\" default>"
                 else

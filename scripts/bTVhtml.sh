@@ -24,7 +24,7 @@ fi
 for i in $(jq -r '.[].Show' $dbNameTV); do #sets i to to the value of "Show", loops through every show in the database
 	myAlt=$(echo ${i} | sed "s/'//g") #strips single quotes from the Show string
 	myAlt=$(echo ${myAlt} | sed "s/\"//g") #strips double guotes from the Show string
-	myImg=$(jq -r "map(select(.Show | contains(\"${i}\")) .Poster) | .[]" $dbNameTV)
+	myImg=$(jq -r "map(select(.Show==\"${i}\") .Poster) | .[]" $dbNameTV)
 	if [[ $myImg != *".jpg"*  ]]; then #if missing poster, generates one
         myImg="";
         UUID="rangen_"$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)".jpg";
@@ -35,7 +35,7 @@ for i in $(jq -r '.[].Show' $dbNameTV); do #sets i to to the value of "Show", lo
 		chmod 755 -R $dTVFolder 
 		tempFolder=$(basename $dTVFolder)
 		myImg=$tempFolder"/"$UUID;
-        currentShow=$(jq -r "map(select(.Show | contains(\"${i}\")) .Episodes[0].File) | .[]" $dbNameTV)
+        currentShow=$(jq -r "map(select(.Show==\"${i}\") .Episodes[0].File) | .[]" $dbNameTV)
         currentShow="../"$currentShow;
         $(./fixFile.sh $currentShow $myID $myImg);
 	fi
