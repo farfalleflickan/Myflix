@@ -1,5 +1,4 @@
 #! /bin/bash
-set -x;
 
 cd "$(dirname "$0")"
 dbNameTV="../dbTV.json"
