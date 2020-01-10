@@ -12,11 +12,20 @@ MoviesPath=../Movies/;
 
 case "${1}" in
 	"1")	#build only movies
-		./bMhtml.sh;;
+    if $homeMovies; then
+        ./bHMhtml.sh;
+    else
+		./bMhtml.sh;
+    fi
+    ;;
 	"2") 	#build only tv shows
 		./bTVhtml.sh;;
 	"3")	#build everything
-		./bMhtml.sh &
+		if $homeMovies; then
+            ./bHMhtml.sh &
+        else
+            ./bMhtml.sh &
+        fi
 		pid1=$!
 		./bTVhtml.sh &
 		pid2=$!
