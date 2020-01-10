@@ -54,6 +54,19 @@ body {
     filter: brightness(30%);
 }
 
+
+.HM_textContainer {
+  position: relative;
+  text-align: center;
+}
+
+.HM_text {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 @media only screen and (max-width: 768px) {
     .myBtn {
         height: auto;
