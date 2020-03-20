@@ -32,7 +32,7 @@ Pray to a deity of your choice!~~
 
 Requirements:
 
-jq, imagemagick, ffmpeg, xmllint and a TMDB api key. See the wiki for a tutorial and more detailed information on the scripts.
+jq, sponge, imagemagick, ffmpeg, xmllint and a TMDB api key. See the wiki for a tutorial and more detailed information on the scripts.
 
 Features :
 * uses BASH for everything... at least so far!
