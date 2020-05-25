@@ -16,7 +16,7 @@ compressImgMo=false
 
 id=${1};
 if [[ ! -z "$TMDBapi" ]]; then
-	myUrl="https://api.themoviedb.org/3/movie/tt"${id}"/images?include_image_language=en&api_key="$TMDBapi
+	myUrl="https://api.themoviedb.org/3/movie/tt"${id}"/images?include_image_language=en,null&api_key="$TMDBapi
 	output=$(curl -s --request GET --url $myUrl | jq -r 'if has("posters") then .posters | map(select((.width | contains(1000)) and (.height | contains(1500))) | .file_path) else "null" end')
 	if [[ $output == *".jpg"* ]]; then
 		output=$( echo $output | jq -r '.[0]')
