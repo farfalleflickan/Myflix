@@ -5,7 +5,7 @@ dbNameTV="../dbTV.json"
 TVhtml="../TV.html"
 . config.cfg
 
-printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"UTF-8\">\n<meta name=\"description\" content=\"Dario Rostirolla\">\n<meta name=\"keywords\" content=\"HTML, CSS\">\n<meta name=\"author\" content=\"Dario Rostirolla\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link href=\"css/tv.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.png\">\n</head>\n<body>\n<script type=\"text/javascript\" src=\"js/MainTVScript.js\"></script>\n<div id=\"wrapper\">\n" > $TVhtml
+printf "<!DOCTYPE html>\n<html>\n<head>\n<title>Myflix</title>\n<meta charset=\"UTF-8\">\n<meta name=\"description\" content=\"Daria Rostirolla\">\n<meta name=\"keywords\" content=\"HTML, CSS\">\n<meta name=\"author\" content=\"Daria Rostirolla\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">\n<link href=\"css/tv.css\" rel=\"stylesheet\" type=\"text/css\">\n<link rel=\"icon\" type=\"image/png\" href=\"img/favicon.png\">\n</head>\n<body>\n<script type=\"text/javascript\" src=\"js/MainTVScript.js\"></script>\n<div id=\"wrapper\">\n" > $TVhtml
 #html specific, per show specific, id given to elements 
 # A+myID identifies the show's "input button"
 # B+myID identifies the show's modal
@@ -30,13 +30,14 @@ for i in $(jq -r '.[].Show' $dbNameTV); do #sets i to to the value of "Show", lo
         UUID="rangen_"$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)".jpg";
 		if [ ! -d "$dTVFolder" ]; then #creates foldser if missing
 			mkdir $dTVFolder
-		fi	
-		$(convert "${AutogenImgResizeTV}" -gravity center -weight 700 -pointsize 200 -annotate 0 "${2}" $dTVFolder$UUID);
+		fi
+		if [ ${#AutogenImgResizeTV[@]} -gt 0 ]; then
+			convert "${AutogenImgResizeTV[@]}" -annotate 0 "${i}" $dTVFolder$UUID;
+        fi	
 		chmod 755 -R $dTVFolder 
 		tempFolder=$(basename $dTVFolder)
 		myImg=$tempFolder"/"$UUID;
         currentShow=$(jq -r "map(select(.Show==\"${i}\") .Episodes[0].File) | .[]" $dbNameTV)
-        currentShow="../"$currentShow;
         $(./fixFile.sh $currentShow $myID $myImg);
 	fi
 	myTempName=$(echo ${myAlt} | sed 's/ //g')
