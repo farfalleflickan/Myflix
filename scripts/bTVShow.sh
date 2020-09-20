@@ -16,7 +16,7 @@ myEpisodes=($(jq -r "map(select(.Show==\"${i}\") .Episodes[].File) | .[]" $dbNam
 myExtras=($(jq -r "map(select(.Show==\"${i}\") .Extras[].File) | .[]" $dbNameTV))
 numEpisodes=${#myEpisodes[@]} #gets array size
 numExtras=${#myExtras[@]} #gets extra's array size
-htmlStr+="<!DOCTYPE html><html><head><title>Myflix</title><meta charset=\"UTF-8\"><meta name=\"description\" content=\"Daria Rostirolla\"><meta name=\"keywords\" content=\"HTML, CSS\"><meta name=\"author\" content=\"Daria Rostirolla\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link href=\"../css/tv.css\" rel=\"stylesheet\" type=\"text/css\"><link rel=\"icon\" type=\"image/png\" href=\"../img/favicon.png\"></head><body>\n<span onclick=\"javascript:hideModal()\" class=\"close\">&times;</span>\n<select id=\"selector${myID}_\" onchange=\"javascript:changeSeason(this)\" class=\"showSelect\">"
+htmlStr+="<!DOCTYPE html><html><head><title>Myflix</title><meta http-equiv=\"Content-type\" content=\"text/html\;charset=UTF-8\"><meta name=\"description\" content=\"Daria Rostirolla\"><meta name=\"keywords\" content=\"HTML, CSS\"><meta name=\"author\" content=\"Daria Rostirolla\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"><link href=\"../css/tv.css\" rel=\"stylesheet\" type=\"text/css\"><link rel=\"icon\" type=\"image/png\" href=\"../img/favicon.png\"></head><body>\n<span onclick=\"javascript:hideModal()\" class=\"close\">&times;</span>\n<select id=\"selector${myID}_\" onchange=\"javascript:changeSeason(this)\" class=\"showSelect\">"
 seasonNum=0
 while [[ $seasonNum -lt $numSeasons ]]; do #adds a option for every season of the tv show
     ((seasonNum++))
