@@ -23,10 +23,10 @@ for i in $MovieList; do #loops through every movie in the database
 	myFile=$(jq -r "map(select(.Movie==\"${i}\") .File) | .[]" $dbNameMovie)
 	mySub=($(jq -r "map(select(.Movie==\"${i}\") .Subs[].subFile) | .[]" $dbNameMovie))
 	mySubNum=${#mySub[@]}
-	myAlt=$(echo ${i} | sed "s/'//")
+	myAlt=$(echo ${i%.*} | sed "s/'//")
 	htmlStr="<div class=\"movieDiv\">\n"
-    htmlStr+="<div class=\"HM_textContainer\"><div class=\"HM_text\">${i}</div>"
-    htmlStr+="<input id=\"A${myID}\" class=\"myBtn\" value=\"\" onclick=\"javascript:showModal(this)\" type=\"image\" src=\"${myImg}\" onload=\"javascript:setAlt(this, '${myAlt}')\">"
+    	htmlStr+="<div class=\"HM_textContainer\"><div class=\"HM_text\">${i%.*}</div>"
+    	htmlStr+="<input id=\"A${myID}\" class=\"myBtn\" value=\"\" onclick=\"javascript:showModal(this)\" type=\"image\" src=\"${myImg}\" onload=\"javascript:setAlt(this, '${myAlt}')\">"
 	htmlStr+="\n<div id=\"B${myID}\" class=\"modal\">\n<div class=\"modal-content\">\n<video id=\"C${myID}\" class=\"video_player\" controls preload=\"none\">\n<source src=\"${myFile}\" type=\"video/mp4\">";
 	htmlStr+=$tempHtml;
 	htmlStr+="\n</video>\n<span onclick=\"javascript:hideModal()\" class=\"close\">&times;</span>\n";
