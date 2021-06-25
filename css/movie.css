@@ -65,6 +65,7 @@ body {
   top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
+  word-break: break-all;
 }
 
 @media only screen and (max-width: 768px) {
