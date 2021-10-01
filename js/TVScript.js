@@ -148,7 +148,7 @@ function showVideoModalsetSubs(elem, srcStr) {
 
 function hideModal() {
     parent.modal.style.display = "none";
-    parent.frameDiv.style.display = "none";    
+    parent.frameDiv = "";    
 }
 
 function hideVideoModal() {
